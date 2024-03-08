@@ -11,27 +11,6 @@ const GlobalStyle = createGlobalStyle`
       height: inherit;
       width: inherit;
   }
-  html {
-      position: absolute;
-      height: 100%;
-      width: 100%;
-  }
-  #root {
-      width: inherit;
-      height: inherit;
-  }
-  div {
-      width: inherit;
-      height: inherit;
-  }
-  svg {
-      width: inherit;
-      height: inherit;
-  }
-  g {
-      width: inherit;
-      height: inherit;
-  }
 `;
 
 export default GlobalStyle;
