@@ -21,7 +21,7 @@ const LorePage = () => {
 
     return (
         <ComposableMap width={imageWidth} height={imageHeight} onClick={clickHandler}>
-            <ZoomableGroup>
+            <ZoomableGroup minZoom={0.5} maxZoom={10}>
                 <image id={"image"} href={"https://cdn.discordapp.com/attachments/436214161077436426/1215728818174697513/image.png?ex=65fdceb1&is=65eb59b1&hm=b43de10d49dc3ef3bc227ff0c541b10642d10d83accc15ff85e46c3ff016f506&"}/>
                 {places}
             </ZoomableGroup>
