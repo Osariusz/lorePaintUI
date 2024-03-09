@@ -17,11 +17,10 @@ const Place = (props: PlaceProps) => {
     if(props.link === "default") {
         props.link = "https://cdn.discordapp.com/attachments/436214161077436426/1215734565340184636/tempplacelogo.png?ex=65fdd40b&is=65eb5f0b&hm=c12b17b57cf5f6c2fd0f2e64f46daad60b5462efb0b265e3f327c9c6c1d32a2f&"
     }
+    console.log(props.position)
      return (
-        <Marker coordinates={props.position}>
-            <image style={{width: props.size?.at(0), height: props.size?.at(1)}}
+            <image x={props.position.at(0)} y = {props.position.at(1)} style={{width: props.size?.at(0), height: props.size?.at(1)}}
                    href={props.link}/>
-        </Marker>
     );
 };
 
