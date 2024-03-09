@@ -1,6 +1,6 @@
-import React, {ForwardedRef, forwardRef, useState} from "react";
+import React, {ForwardedRef, forwardRef, useEffect, useState} from "react";
 // @ts-ignore
-import { ComposableMap, ZoomableGroup, useMapContext } from "react-simple-maps";
+import {ComposableMap, ZoomableGroup, useZoomPanContext, useMapContext, Point} from "react-simple-maps";
 import Place from "../place/Place";
 
 
@@ -13,11 +13,20 @@ const LorePage = () => {
 
     // @ts-ignore
     const PlaceWithMapContext = ({ position }) => {
-        const { projection } = useMapContext();
-        const projectedPosition = projection(position);
+        const [projectedPosition, setProjectedPosition] = useState([0,0])
+        const context = useZoomPanContext();
+        // @ts-ignore
+        const { x, y, k } = context;
         console.log("map position")
         console.log(projectedPosition);
-        return <Place position={projectedPosition} />;
+        console.log("width and height of map")
+        useEffect(() => {
+            console.log(context);
+            setProjectedPosition([(position.at(0)-x)/k, (position.at(1)-y)/k]);
+        }, [])
+
+
+        return <Place position={projectedPosition as Point} />;
     };
 
 
@@ -35,7 +44,7 @@ const LorePage = () => {
         }
 
 
-        const coordinates = [event.clientX-width/2, event.clientY-height/2];
+        const coordinates = [event.clientX, event.clientY];
         console.log("click coords")
         console.log(coordinates)
         addPlace(coordinates);
@@ -61,8 +70,8 @@ const LorePage = () => {
     }
 
     return (
-        <ComposableMap width={imageWidth} height={imageHeight} projection="geoMercator" projectionConfig={{center: [0,0]}} onClick={clickHandler}>
-            <ZoomableGroup zoom={1} maxZoom={20} minZoom={0} style={{border:5, borderColor: "black"}}>
+        <ComposableMap width={imageWidth} height={imageHeight} onClick={clickHandler}>
+            <ZoomableGroup>
                 <image id={"image"} href={"https://cdn.discordapp.com/attachments/436214161077436426/1215728818174697513/image.png?ex=65fdceb1&is=65eb59b1&hm=b43de10d49dc3ef3bc227ff0c541b10642d10d83accc15ff85e46c3ff016f506&"}/>
                 {places}
                 <CustomLine coordinates={[[0,0], [500,0]]}
