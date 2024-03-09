@@ -29,14 +29,13 @@ const Place = (props: PlaceProps) => {
 
     const [projectedPosition, setProjectedPosition] = useState([0,0])
     const context: zoomPanContext = useZoomPanContext();
-
     const { x, y, k } = context;
+
     useEffect(() => {
         // @ts-ignore
         setProjectedPosition([(props.position.at(0)-x)/k, (props.position.at(1)-y)/k]);
     }, [])
 
-    console.log(props.position)
      return (
             <image x={projectedPosition.at(0)} y = {projectedPosition.at(1)} style={{width: props.size?.at(0), height: props.size?.at(1)}}
                    href={props.link}/>
