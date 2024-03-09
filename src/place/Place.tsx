@@ -33,7 +33,7 @@ const Place = (props: PlaceProps) => {
 
     useEffect(() => {
         // @ts-ignore
-        setProjectedPosition([(props.position.at(0)-x)/k, (props.position.at(1)-y)/k]);
+        setProjectedPosition([(props.position.at(0)-x)/k-(props.size?.at(0))/2, (props.position.at(1)-y)/k-(props.size?.at(1))/2]);
     }, [])
 
      return (
