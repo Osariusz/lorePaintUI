@@ -3,33 +3,11 @@ import React, {ForwardedRef, forwardRef, useEffect, useState} from "react";
 import {ComposableMap, ZoomableGroup, useZoomPanContext, useMapContext, Point} from "react-simple-maps";
 import Place from "../place/Place";
 
-
-
 const LorePage = () => {
     const [places, setPlaces] = useState([]);
 
     const imageWidth = 1653;
     const imageHeight = 796;
-
-    // @ts-ignore
-    const PlaceWithMapContext = ({ position }) => {
-        const [projectedPosition, setProjectedPosition] = useState([0,0])
-        const context = useZoomPanContext();
-        // @ts-ignore
-        const { x, y, k } = context;
-        console.log("map position")
-        console.log(projectedPosition);
-        console.log("width and height of map")
-        useEffect(() => {
-            console.log(context);
-            setProjectedPosition([(position.at(0)-x)/k, (position.at(1)-y)/k]);
-        }, [])
-
-
-        return <Place position={projectedPosition as Point} />;
-    };
-
-
 
     const clickHandler = (event:any) => {
         let {innerWidth: width, innerHeight: height} = window;
@@ -66,7 +44,7 @@ const LorePage = () => {
 
     const addPlace = (position:any) => {
         // @ts-ignore
-        setPlaces(prevPlaces => [...prevPlaces, <PlaceWithMapContext position={position}/>]);
+        setPlaces(prevPlaces => [...prevPlaces, <Place position={position}/>]);
     }
 
     return (
