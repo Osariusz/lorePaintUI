@@ -50,6 +50,12 @@ const LorePage: React.FC = () => {
         });
 
         map.current.on('click', (event) => {
+            let feature = map.current?.forEachFeatureAtPixel(event.pixel,
+                function(feature) {
+                    return feature;
+                });
+            console.log(feature)
+            console.log(map.current?.getFeaturesAtPixel(event.pixel));
             source.addFeature(Place({position: event.coordinate}));
         });
     }, []);
