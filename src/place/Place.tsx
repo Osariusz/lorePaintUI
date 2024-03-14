@@ -1,9 +1,4 @@
-import React, {useEffect, useState} from "react";
-
-//i don't know why it cant find the import even though it works
-// @ts-ignore
 import Point from "ol/geom/Point";
-import {FeatureType} from "ol/format/WFS";
 import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
 import {Coordinate} from "ol/coordinate";
