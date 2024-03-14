@@ -46,6 +46,7 @@ const LorePage: React.FC = () => {
                 zoom: 2,
                 maxZoom: 8,
             }),
+            controls: []
         });
 
         map.current.on('click', (event) => {
