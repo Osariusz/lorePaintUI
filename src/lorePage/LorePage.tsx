@@ -24,7 +24,11 @@ const LorePage: React.FC = () => {
         if (!mapRef.current) return;
 
         const source = new VectorSource();
-        
+
+        let vectorLayer = new VectorLayer({
+                source: source
+            });
+
         map.current = new Map({
             target: mapRef.current,
             layers: [
@@ -36,9 +40,7 @@ const LorePage: React.FC = () => {
                         imageExtent: extent,
                     })
                 }),
-                new VectorLayer({
-                    source: source
-                }),
+                vectorLayer,
             ],
             view: new View({
                 projection: projection,
@@ -54,9 +56,9 @@ const LorePage: React.FC = () => {
                 function(feature) {
                     return feature;
                 });
-            console.log(feature)
-            console.log(map.current?.getFeaturesAtPixel(event.pixel));
             source.addFeature(Place({position: event.coordinate}));
+            console.log(vectorLayer.getFeatures(event.pixel))
+
         });
     }, []);
 
