@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Map from "ol/Map";
 import View from "ol/View";
 import {Projection} from "ol/proj";
@@ -8,6 +8,10 @@ import Place from "../place/Place";
 import ImageLayer from "ol/layer/Image";
 import Static from "ol/source/ImageStatic";
 import {getCenter} from "ol/extent";
+import Feature from "ol/Feature";
+import PlaceEdit from "../place/PlaceEdit";
+import styled from "@emotion/styled";
+import {Container} from "@mui/material";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -16,9 +20,18 @@ const projection = new Projection({
     extent: extent,
 });
 
+const StyledContainer = styled(Container)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+`;
+
 const LorePage: React.FC = () => {
     const mapRef = useRef<HTMLDivElement>(null);
     const map = useRef<Map | null>(null);
+    const [placeEdit, setPlaceEdit] = useState(null);
 
     useEffect(() => {
         if (!mapRef.current) return;
@@ -56,13 +69,23 @@ const LorePage: React.FC = () => {
                 function(feature) {
                     return feature;
                 });
-            source.addFeature(Place({position: event.coordinate}));
-            console.log(vectorLayer.getFeatures(event.pixel))
+
+            vectorLayer.getFeatures(event.pixel).then(function(feature) {
+                if(feature.length > 0 && feature[0] instanceof Place) {
+                    let place: Place = feature[0] as Place;
+                    place.edit();
+                    return;
+                }
+                source.addFeature(new Place(event.coordinate, setPlaceEdit));
+            });
 
         });
     }, []);
 
-    return <div ref={mapRef} style={{ width: '100%', height: '100vh' }} />;
+    return <StyledContainer>
+        <PlaceEdit place={placeEdit}/>
+        <div ref={mapRef} style={{ width: '100%', height: '100vh' }} />
+    </StyledContainer>;
 };
 
 export default LorePage;
