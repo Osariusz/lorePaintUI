@@ -5,13 +5,15 @@ import LoginPage from "./loginPage/LoginPage";
 import GlobalStyle from "./GlobalStyle";
 import LorePage from "./lorePage/LorePage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import RegisterPage from "./loginPage/RegisterPage";
 
 function App() {
   return (//<GlobalStyle/>
       <BrowserRouter>
           <Routes>
-              <Route index path="/loginPage" element={<LoginPage/>}/>
-              <Route path="/lorePage" element={<LorePage/>}/>
+              <Route index path="/login" element={<LoginPage/>}/>
+              <Route index path="/register" element={<RegisterPage/>}/>
+              <Route path="/lore" element={<LorePage/>}/>
           </Routes>
       </BrowserRouter>
   );

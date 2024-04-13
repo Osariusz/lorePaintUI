@@ -20,13 +20,13 @@ const StyledForm = styled('form')`
   max-width: 360px;
 `;
 
-const LoginPage: React.FC = () => {
+const RegisterPage: React.FC = () => {
 
-    const TEMP_BACKEND = "http://localhost:8080/public/login";
+    const TEMP_BACKEND = "http://localhost:8080/public/register";
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
-    const [loggedIn, setLoggedIn] = useState(false);
+    const [registered, setRegistered] = useState(false);
     //const [cookies, setCookies] = useCookies();
     //const jwt = cookies.jwt;
 
@@ -47,17 +47,17 @@ const LoginPage: React.FC = () => {
                 }, {withCredentials: true}
             )
             if(response.status == 200) {
-                setLoggedIn(true);
+                setRegistered(true);
             }
             console.log(response);
         } catch (error: any) {
-            console.log("Login failed" + error.message);
+            console.log("Register failed" + error.message);
         }
     }
 
     return (<>
-        {loggedIn && <Navigate to="/lore"/>}
-        {!loggedIn && <StyledContainer>
+        {registered && <Navigate to="/login"/>}
+        {!registered && <StyledContainer>
             <Typography variant="h4" component="h1">
                 Login
             </Typography>
@@ -93,7 +93,7 @@ const LoginPage: React.FC = () => {
                     color="primary"
                     onClick={submit}
                 >
-                    Sign In
+                    Register
                 </Button>
             </StyledForm>
         </StyledContainer>}
@@ -101,4 +101,4 @@ const LoginPage: React.FC = () => {
     );
 };
 
-export default LoginPage;
+export default RegisterPage;
