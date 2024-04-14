@@ -34,7 +34,7 @@ const LorePage: React.FC = () => {
     const map = useRef<Map | null>(null);
     const [placeEdit, setPlaceEdit] = useState(null);
 
-    const TEMP_BACKEND = "http://localhost:8080/api/lore/1";
+    const TEMP_BACKEND = "http://localhost:8080/api/lore/available";
 
     useEffect(() => {
         if (!mapRef.current) return;
