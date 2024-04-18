@@ -13,6 +13,7 @@ import PlaceEdit from "../place/PlaceEdit";
 import styled from "@emotion/styled";
 import {Container} from "@mui/material";
 import axios from "axios";
+import {useParams} from "react-router-dom";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -29,12 +30,13 @@ const StyledContainer = styled(Container)`
   height: 100vh;
 `;
 
-const LorePage: React.FC = () => {
+const LorePage = () => {
+    const { loreId } = useParams();
     const mapRef = useRef<HTMLDivElement>(null);
     const map = useRef<Map | null>(null);
     const [placeEdit, setPlaceEdit] = useState(null);
 
-    const TEMP_BACKEND = "http://localhost:8080/api/lore/available";
+    const TEMP_BACKEND = "http://localhost:8080/api/lore/${loreId}";
 
     useEffect(() => {
         if (!mapRef.current) return;

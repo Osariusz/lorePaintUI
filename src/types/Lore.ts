@@ -1,10 +1,13 @@
 interface Lore {
-    name: String,
-    picturePath: String | null
+    id: number,
+    name: string,
+    description: string,
+    picturePath: string
 }
 
 export const defaultProps = {
-    picturePath: null
+    description: "",
+    picturePath: ""
 }
 
 export default Lore;

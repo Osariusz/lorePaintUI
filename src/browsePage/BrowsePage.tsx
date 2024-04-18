@@ -7,21 +7,22 @@ import Lore from "../types/Lore";
 
 
 const StyledContainer = styled(Container)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+    display: flex;
+    flex: 2;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #8A8C85;
 `;
 
 interface BrowsePageProps {
-    lores: [Lore]
+    lores: Lore[]
 }
 
 const BrowsePage = (props: BrowsePageProps) => {
 
-    return <StyledContainer>
-        {props.lores.map(lore => (<LoreEntry lore={lore}/>))}
+    return <StyledContainer maxWidth={false}>
+        {props.lores.map(lore => (<LoreEntry key={lore.id} lore={lore}/>))}
     <div style={{ width: '100%', height: '100vh' }} />
     </StyledContainer>;
 };
