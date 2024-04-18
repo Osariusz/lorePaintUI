@@ -56,7 +56,7 @@ const LoginPage: React.FC = () => {
     }
 
     return (<>
-        {loggedIn && <Navigate to="/lore"/>}
+        {loggedIn && <Navigate to="/browse"/>}
         {!loggedIn && <StyledContainer>
             <Typography variant="h4" component="h1">
                 Login
