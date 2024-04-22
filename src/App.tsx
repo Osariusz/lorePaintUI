@@ -23,7 +23,7 @@ function App() {
               <Route index path="/login" element={<LoginPage/>}/>
               <Route index path="/register" element={<RegisterPage/>}/>
               <Route path="/lore/:id" element={<LorePage/>}/>
-              <Route path="/browse" element={<BrowsePage lores={lores}/>}/>
+              <Route path="/browse" element={<BrowsePage/>}/>
           </Routes>
       </BrowserRouter>
   );

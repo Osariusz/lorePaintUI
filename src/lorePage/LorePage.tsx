@@ -14,6 +14,7 @@ import styled from "@emotion/styled";
 import {Container} from "@mui/material";
 import axios from "axios";
 import {useParams} from "react-router-dom";
+import LoreApi from "../utils/LoreApi";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -36,19 +37,16 @@ const LorePage = () => {
     const map = useRef<Map | null>(null);
     const [placeEdit, setPlaceEdit] = useState(null);
 
-    const TEMP_BACKEND = `http://localhost:8080/api/lore/${id}`;
+
 
     useEffect(() => {
         if (!mapRef.current) return;
 
-        try {
-            axios.get(TEMP_BACKEND, {withCredentials: true}).then((response) => {
-                console.log(response);
-            })
+        const idNumber = Number(id);
+        LoreApi.getLoreById(idNumber).then(response => {
+            console.log(response);
+        })
 
-        } catch (error: any) {
-            console.log("Lore failed" + error.message);
-        }
 
         const source = new VectorSource();
 

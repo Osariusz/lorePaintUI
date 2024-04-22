@@ -4,6 +4,8 @@ import LorePage from "../lorePage/LorePage";
 import Place from "../place/Place";
 import LoreEntry from "./LoreEntry";
 import Lore from "../types/Lore";
+import {useEffect, useState} from "react";
+import LoreApi from "../utils/LoreApi";
 
 
 const StyledContainer = styled(Container)`
@@ -15,14 +17,19 @@ const StyledContainer = styled(Container)`
     background: #8A8C85;
 `;
 
-interface BrowsePageProps {
-    lores: Lore[]
-}
+const BrowsePage = () => {
 
-const BrowsePage = (props: BrowsePageProps) => {
+    const [lores, setLores] = useState<Lore[]>([]);
+
+    useEffect(() => {
+        LoreApi.getAllLores().then((response) => {
+            setLores(response);
+            console.log(lores);
+        });
+    }, [])
 
     return <StyledContainer maxWidth={false}>
-        {props.lores.map(lore => (<LoreEntry key={lore.id} lore={lore}/>))}
+        {lores.map(lore => (<LoreEntry key={lore.id} lore={lore}/>))}
     <div style={{ width: '100%', height: '100vh' }} />
     </StyledContainer>;
 };

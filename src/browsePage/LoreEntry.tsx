@@ -45,7 +45,6 @@ const LoreEntry = (props: LoreEntryProps) => {
         setLoreClicked(true);
     }
 
-    //TODO: fix routing after click
     return (<>
         {loreClicked && <Navigate to={`/lore/${lore.id}`}/>}
         {!loreClicked && <StyledContainer style={{ backgroundColor: '#534439' }}>
