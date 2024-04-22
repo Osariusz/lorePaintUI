@@ -31,12 +31,12 @@ const StyledContainer = styled(Container)`
 `;
 
 const LorePage = () => {
-    const { loreId } = useParams();
+    const { id } = useParams();
     const mapRef = useRef<HTMLDivElement>(null);
     const map = useRef<Map | null>(null);
     const [placeEdit, setPlaceEdit] = useState(null);
 
-    const TEMP_BACKEND = "http://localhost:8080/api/lore/${loreId}";
+    const TEMP_BACKEND = `http://localhost:8080/api/lore/${id}`;
 
     useEffect(() => {
         if (!mapRef.current) return;

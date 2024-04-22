@@ -47,7 +47,7 @@ const LoreEntry = (props: LoreEntryProps) => {
 
     //TODO: fix routing after click
     return (<>
-        {loreClicked && <Navigate to='/lore/${lore.id}'/>}
+        {loreClicked && <Navigate to={`/lore/${lore.id}`}/>}
         {!loreClicked && <StyledContainer style={{ backgroundColor: '#534439' }}>
             <Grid item>
                 <img src={lore.picturePath} alt={lore.name} />
