@@ -15,6 +15,9 @@ import {Container} from "@mui/material";
 import axios from "axios";
 import {useParams} from "react-router-dom";
 import LoreApi from "../utils/LoreApi";
+import PlaceApi from "../utils/PlaceApi";
+import PlaceCreate from "../types/PlaceCreate";
+import Point from "ol/geom/Point";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -37,12 +40,11 @@ const LorePage = () => {
     const map = useRef<Map | null>(null);
     const [placeEdit, setPlaceEdit] = useState(null);
 
-
+    const idNumber = Number(id);
 
     useEffect(() => {
         if (!mapRef.current) return;
 
-        const idNumber = Number(id);
         LoreApi.getLoreById(idNumber).then(response => {
             console.log(response);
         })
@@ -88,7 +90,18 @@ const LorePage = () => {
                     place.edit();
                     return;
                 }
-                source.addFeature(new Place(event.coordinate, setPlaceEdit));
+                const place = new Place(event.coordinate, setPlaceEdit);
+                const point = new Point(event.coordinate).getCoordinates();
+                const placeCreate: PlaceCreate = {
+                    name: "miejsce",
+                    description: "nowe miejsce",
+                    loreId: idNumber,
+                    creationLoreDate: new Date(),
+                    point: {x: point.at(0), y: point.at(1)}
+                }
+
+                source.addFeature(place);
+                PlaceApi.createPlace(placeCreate);
             });
 
         });
