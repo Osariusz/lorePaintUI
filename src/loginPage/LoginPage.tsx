@@ -3,6 +3,7 @@ import { Button, TextField, Container, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import axios from 'axios';
 import  { Navigate } from 'react-router-dom'
+import AuthApi from "../utils/AuthApi";
 
 
 const StyledContainer = styled(Container)`
@@ -21,15 +22,9 @@ const StyledForm = styled('form')`
 `;
 
 const LoginPage: React.FC = () => {
-
-    const TEMP_BACKEND = "http://localhost:8080/public/login";
-
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [loggedIn, setLoggedIn] = useState(false);
-    //const [cookies, setCookies] = useCookies();
-    //const jwt = cookies.jwt;
-
 
     const onUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUsername(e.target.value);
@@ -40,19 +35,7 @@ const LoginPage: React.FC = () => {
 
     const submit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        try {
-            const response = await axios.post(TEMP_BACKEND, {
-                    username,
-                    password
-                }, {withCredentials: true}
-            )
-            if(response.status == 200) {
-                setLoggedIn(true);
-            }
-            console.log(response);
-        } catch (error: any) {
-            console.log("Login failed" + error.message);
-        }
+        await AuthApi.login(username, password, setLoggedIn);
     }
 
     return (<>
