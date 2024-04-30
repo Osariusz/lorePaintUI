@@ -108,23 +108,8 @@ const LorePage = () => {
                     }
                     const coordinates = event.coordinate;
                     const place = new Place(coordinates, setPlaceEdit);
-                    const point = new Point(coordinates).getCoordinates();
-                    const placeCreate: PlaceCreate = {
-                        name: "miejsce",
-                        description: "nowe miejsce",
-                        loreId: idNumber,
-                        creationLoreDate: new Date(),
-                        point: {x: point.at(0), y: point.at(1)}
-                    }
-
-                    const coordinate = event.coordinate;
-                    const hdms = toStringHDMS(toLonLat(coordinate));
-
-                    overlay.setPosition(coordinate);
-
-
+                    overlay.setPosition(coordinates);
                     source.addFeature(place);
-                    PlaceApi.createPlace(placeCreate);
                 });
 
             });
@@ -132,7 +117,7 @@ const LorePage = () => {
 
 
     return <StyledContainer>
-        <PlaceEdit ref={editElement} place={placeEdit}/>
+        <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber}/>
 
         <div ref={mapRef} style={{width: '100%', height: '100vh'}}/>
 
