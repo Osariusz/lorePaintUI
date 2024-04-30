@@ -24,7 +24,6 @@ const BrowsePage = () => {
     useEffect(() => {
         LoreApi.getAllLores().then((response) => {
             setLores(response);
-            console.log(lores);
         });
     }, [])
 
