@@ -44,12 +44,12 @@ const LorePage = () => {
     const map = useRef<Map | null>(null);
     const [placeEdit, setPlaceEdit] = useState(null);
 
-    const popUp = useRef<HTMLDivElement>(null);
+    const editElement = useRef<HTMLDivElement>(null);
 
     const idNumber = Number(id);
 
     useEffect(() => {
-        if (!map.current && mapRef.current) {
+        if (!map.current && mapRef.current && editElement) {
 
             LoreApi.getLoreById(idNumber).then(response => {
                 console.log(response);
@@ -85,14 +85,13 @@ const LorePage = () => {
             });
 
             const overlay = new Overlay(({
-                element: document.createElement('div'),
+                element: editElement.current!,
                 autoPan: {
                     animation: {
                         duration: 250,
                     },
                 },
             }));
-            overlay.getElement()!.innerText = 'Overlay text';
             map.current.addOverlay(overlay);
 
             map.current.on('click', (event) => {
@@ -120,12 +119,12 @@ const LorePage = () => {
 
                     const coordinate = event.coordinate;
                     const hdms = toStringHDMS(toLonLat(coordinate));
-                    
+
                     overlay.setPosition(coordinate);
 
 
-                    //source.addFeature(place);
-                    //PlaceApi.createPlace(placeCreate);
+                    source.addFeature(place);
+                    PlaceApi.createPlace(placeCreate);
                 });
 
             });
@@ -133,7 +132,7 @@ const LorePage = () => {
 
 
     return <StyledContainer>
-
+        <PlaceEdit ref={editElement} place={placeEdit}/>
 
         <div ref={mapRef} style={{width: '100%', height: '100vh'}}/>
 
