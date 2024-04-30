@@ -10,7 +10,7 @@ class Place extends Feature {
             geometry: new Point(position),
         });
         if(link === "default") {
-            link = "https://cdn.discordapp.com/attachments/436214161077436426/1215734565340184636/tempplacelogo.png?ex=65fdd40b&is=65eb5f0b&hm=c12b17b57cf5f6c2fd0f2e64f46daad60b5462efb0b265e3f327c9c6c1d32a2f&"
+            link = "https://www.svgrepo.com/show/314953/place-marker.svg"
         }
         //TODO: add size change to style
         let iconStyles = new Style({image: new Icon({
