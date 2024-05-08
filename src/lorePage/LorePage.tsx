@@ -59,7 +59,8 @@ const LorePage = () => {
         userCursorsRef.current = userCursorsRef.current.slice(0, userCursors.length);
     }, [userCursors]);
 
-    useSubscription('/api/topic/reply', (message) => {
+    useSubscription(`/api/lore/${id}/get_mouse`, (message) => {
+        console.log(message);
         if(cursorOverlay) {
             const coordinates = JSON.parse(message.body);
             cursorOverlay!.setPosition(coordinates);
@@ -70,7 +71,8 @@ const LorePage = () => {
 
     const publishMessage = (message: string) => {
         if(stompClient) {
-            stompClient.publish({destination: '/api/app/broadcast', body: message})
+            //console.log(message);
+            stompClient.publish({destination: `/api/app/${id}/set_mouse`, body: message})
         }
     }
 
