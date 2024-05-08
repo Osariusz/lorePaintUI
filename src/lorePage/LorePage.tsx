@@ -20,6 +20,10 @@ import PlaceCreate from "../types/PlaceCreate";
 import Point from "ol/geom/Point";
 import {Overlay} from "ol";
 import {toStringHDMS} from "ol/coordinate";
+import {StompSessionProvider, useStompClient, useSubscription} from "react-stomp-hooks";
+import UserCursor from "../users/UserCursor";
+import userCursor from "../users/UserCursor";
+import Cursor from "../types/Cursor";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -43,14 +47,49 @@ const LorePage = () => {
     const mapRef = useRef<HTMLDivElement>(null);
     const map = useRef<Map | null>(null);
     const [placeEdit, setPlaceEdit] = useState(null);
+    const [userCursors, setUserCursor] = useState<Cursor[]>([{id: 0, name:"zenek333",color:"red"}]);
+    const userCursorsRef = useRef<any[]>([]);
+
+    const [cursorOverlay, setCursorOverlay] = useState<Overlay>();
 
     const editElement = useRef<HTMLDivElement>(null);
 
     const idNumber = Number(id);
 
     useEffect(() => {
-        if (!map.current && mapRef.current && editElement) {
+        userCursorsRef.current = userCursorsRef.current.slice(0, userCursors.length);
+    }, [userCursors]);
 
+    useSubscription('/api/topic/reply', (message) => {
+        if(cursorOverlay) {
+            const decodedMessage = JSON.parse(message.body);
+            const coordinates = [decodedMessage.x, decodedMessage.y];
+            console.log(cursorOverlay)
+            cursorOverlay!.setPosition(coordinates);
+        }
+    });
+
+    const stompClient = useStompClient();
+
+    const publishMessage = (message: string) => {
+        if(stompClient) {
+            console.log("e")
+            stompClient.publish({destination: '/api/app/broadcast', body: message})
+        }
+    }
+
+    const handleMouseMove = (event: MouseEvent) => {
+        const coordinates = {x: event.clientX, y: event.clientY};
+        const coordinatesString = JSON.stringify(coordinates);
+        publishMessage(coordinatesString);
+    }
+
+    useEffect(() => {
+        window.addEventListener('mousemove', handleMouseMove);
+    }, [stompClient?.connected]);
+
+    useEffect(() => {
+        if (!map.current && mapRef.current && editElement) {
             LoreApi.getLoreById(idNumber).then(response => {
                 console.log(response);
             })
@@ -84,7 +123,7 @@ const LorePage = () => {
                 controls: []
             });
 
-            const overlay = new Overlay(({
+            const editOverlay = new Overlay(({
                 element: editElement.current!,
                 autoPan: {
                     animation: {
@@ -92,7 +131,13 @@ const LorePage = () => {
                     },
                 },
             }));
-            map.current.addOverlay(overlay);
+            const localCursorOverlay = new Overlay(({
+                element: userCursorsRef.current[0]!
+            }));
+            setCursorOverlay(localCursorOverlay);
+
+            map.current.addOverlay(editOverlay);
+            map.current.addOverlay(localCursorOverlay!);
 
             map.current.on('click', (event) => {
                 let feature = map.current?.forEachFeatureAtPixel(event.pixel,
@@ -108,7 +153,7 @@ const LorePage = () => {
                     }
                     const coordinates = event.coordinate;
                     const place = new Place(coordinates, setPlaceEdit);
-                    overlay.setPosition(coordinates);
+                    editOverlay.setPosition(coordinates);
                     source.addFeature(place);
                 });
 
@@ -117,11 +162,13 @@ const LorePage = () => {
 
 
     return <StyledContainer>
-        <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber}/>
-
-        <div ref={mapRef} style={{width: '100%', height: '100vh'}}/>
-
-
+            {
+                userCursors.map(((cursor, i) => (
+                <UserCursor key={i} color={"red"} ref={el => userCursorsRef.current[i] = el}/>
+                )))
+            }
+            <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber}/>
+            <div ref={mapRef} style={{width: '100%', height: '100vh'}}/>
     </StyledContainer>
         ;
 };

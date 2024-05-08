@@ -1,8 +1,11 @@
 import axios from "axios";
 import {getCookie} from "typescript-cookie";
+import { io } from "socket.io-client";
+
+const backendURL = "http://localhost:8080";
 
 const api = axios.create({
-    baseURL: 'http://localhost:8080'
+    baseURL: backendURL
 })
 
 api.interceptors.request.use((config) => {
