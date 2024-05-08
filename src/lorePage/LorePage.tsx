@@ -19,11 +19,12 @@ import PlaceApi from "../utils/PlaceApi";
 import PlaceCreate from "../types/PlaceCreate";
 import Point from "ol/geom/Point";
 import {Overlay} from "ol";
-import {toStringHDMS} from "ol/coordinate";
+import {Coordinate, createStringXY, toStringHDMS} from "ol/coordinate";
 import {StompSessionProvider, useStompClient, useSubscription} from "react-stomp-hooks";
 import UserCursor from "../users/UserCursor";
 import userCursor from "../users/UserCursor";
 import Cursor from "../types/Cursor";
+import {defaults, MousePosition} from "ol/control";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -39,8 +40,6 @@ const StyledContainer = styled(Container)`
   justify-content: center;
   height: 100vh;
 `;
-
-
 
 const LorePage = () => {
     const { id } = useParams();
@@ -62,8 +61,7 @@ const LorePage = () => {
 
     useSubscription('/api/topic/reply', (message) => {
         if(cursorOverlay) {
-            const decodedMessage = JSON.parse(message.body);
-            const coordinates = [decodedMessage.x, decodedMessage.y];
+            const coordinates = JSON.parse(message.body);
             console.log(cursorOverlay)
             cursorOverlay!.setPosition(coordinates);
         }
@@ -79,8 +77,9 @@ const LorePage = () => {
     }
 
     const handleMouseMove = (event: MouseEvent) => {
-        const coordinates = {x: event.clientX, y: event.clientY};
+        const coordinates =  map.current?.getEventCoordinate(event);//{x: event.clientX, y: event.clientY};
         const coordinatesString = JSON.stringify(coordinates);
+        console.log(coordinates);
         publishMessage(coordinatesString);
     }
 
