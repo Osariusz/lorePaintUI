@@ -62,7 +62,6 @@ const LorePage = () => {
     useSubscription('/api/topic/reply', (message) => {
         if(cursorOverlay) {
             const coordinates = JSON.parse(message.body);
-            console.log(cursorOverlay)
             cursorOverlay!.setPosition(coordinates);
         }
     });
@@ -71,7 +70,6 @@ const LorePage = () => {
 
     const publishMessage = (message: string) => {
         if(stompClient) {
-            console.log("e")
             stompClient.publish({destination: '/api/app/broadcast', body: message})
         }
     }
@@ -79,7 +77,6 @@ const LorePage = () => {
     const handleMouseMove = (event: MouseEvent) => {
         const coordinates =  map.current?.getEventCoordinate(event);//{x: event.clientX, y: event.clientY};
         const coordinatesString = JSON.stringify(coordinates);
-        console.log(coordinates);
         publishMessage(coordinatesString);
     }
 
