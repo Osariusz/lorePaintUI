@@ -25,6 +25,8 @@ import UserCursor from "../users/UserCursor";
 import userCursor from "../users/UserCursor";
 import Cursor from "../types/Cursor";
 import {defaults, MousePosition} from "ol/control";
+import placeDTO from "../types/PlaceDTO";
+import PlaceDTO from "../types/PlaceDTO";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -41,6 +43,8 @@ const StyledContainer = styled(Container)`
   height: 100vh;
 `;
 
+
+
 const LorePage = () => {
     const { id } = useParams();
     const mapRef = useRef<HTMLDivElement>(null);
@@ -54,6 +58,84 @@ const LorePage = () => {
     const editElement = useRef<HTMLDivElement>(null);
 
     const idNumber = Number(id);
+
+    function loadLore() {
+        LoreApi.getLoreById(idNumber).then(response => {
+            console.log(response);
+        })
+    }
+
+    function loadMap() {
+        const source = new VectorSource();
+        let vectorLayer = new VectorLayer({
+            source: source
+        });
+        map.current = new Map({
+            target: mapRef.current!,
+            layers: [
+                new ImageLayer({
+                    source: new Static({
+                        attributions: '© <a href="https://xkcd.com/license.html">xkcd</a>',
+                        url: 'https://imgs.xkcd.com/comics/online_communities.png',
+                        projection: projection,
+                        imageExtent: extent,
+                    })
+                }),
+                vectorLayer,
+            ],
+            view: new View({
+                projection: projection,
+                center: getCenter(extent),
+                zoom: 2,
+                maxZoom: 8,
+            }),
+            controls: []
+        });
+
+        const editOverlay = new Overlay(({
+            element: editElement.current!,
+            autoPan: {
+                animation: {
+                    duration: 250,
+                },
+            },
+        }));
+        const localCursorOverlay = new Overlay(({
+            element: userCursorsRef.current[0]!
+        }));
+        setCursorOverlay(localCursorOverlay);
+
+        map.current.addOverlay(editOverlay);
+        map.current.addOverlay(localCursorOverlay!);
+
+        map.current.on('click', (event) => {
+            let feature = map.current?.forEachFeatureAtPixel(event.pixel,
+                function (feature) {
+                    return feature;
+                });
+
+            vectorLayer.getFeatures(event.pixel).then(function (feature) {
+                if (feature.length > 0 && feature[0] instanceof Place) {
+                    let place: Place = feature[0] as Place;
+                    place.edit();
+                    return;
+                }
+                const coordinates = event.coordinate;
+                const place = new Place(coordinates, setPlaceEdit);
+                editOverlay.setPosition(coordinates);
+                source.addFeature(place);
+            });
+
+        });
+
+        PlaceApi.getAllPlaces(idNumber).then((response: Array<PlaceDTO>) => {
+            response.forEach((place: placeDTO) => {
+                const OLPlace = new Place([place.x, place.y], setPlaceEdit);
+                source.addFeature(OLPlace);
+            })
+        })
+
+    }
 
     useEffect(() => {
         userCursorsRef.current = userCursorsRef.current.slice(0, userCursors.length);
@@ -88,75 +170,10 @@ const LorePage = () => {
 
     useEffect(() => {
         if (!map.current && mapRef.current && editElement) {
-            LoreApi.getLoreById(idNumber).then(response => {
-                console.log(response);
-            })
-
-
-            const source = new VectorSource();
-
-            let vectorLayer = new VectorLayer({
-                source: source
-            });
-
-            map.current = new Map({
-                target: mapRef.current!,
-                layers: [
-                    new ImageLayer({
-                        source: new Static({
-                            attributions: '© <a href="https://xkcd.com/license.html">xkcd</a>',
-                            url: 'https://imgs.xkcd.com/comics/online_communities.png',
-                            projection: projection,
-                            imageExtent: extent,
-                        })
-                    }),
-                    vectorLayer,
-                ],
-                view: new View({
-                    projection: projection,
-                    center: getCenter(extent),
-                    zoom: 2,
-                    maxZoom: 8,
-                }),
-                controls: []
-            });
-
-            const editOverlay = new Overlay(({
-                element: editElement.current!,
-                autoPan: {
-                    animation: {
-                        duration: 250,
-                    },
-                },
-            }));
-            const localCursorOverlay = new Overlay(({
-                element: userCursorsRef.current[0]!
-            }));
-            setCursorOverlay(localCursorOverlay);
-
-            map.current.addOverlay(editOverlay);
-            map.current.addOverlay(localCursorOverlay!);
-
-            map.current.on('click', (event) => {
-                let feature = map.current?.forEachFeatureAtPixel(event.pixel,
-                    function (feature) {
-                        return feature;
-                    });
-
-                vectorLayer.getFeatures(event.pixel).then(function (feature) {
-                    if (feature.length > 0 && feature[0] instanceof Place) {
-                        let place: Place = feature[0] as Place;
-                        place.edit();
-                        return;
-                    }
-                    const coordinates = event.coordinate;
-                    const place = new Place(coordinates, setPlaceEdit);
-                    editOverlay.setPosition(coordinates);
-                    source.addFeature(place);
-                });
-
-            });
-        }}, []);
+            loadLore();
+            loadMap();
+        }
+    }, []);
 
 
     return <StyledContainer>

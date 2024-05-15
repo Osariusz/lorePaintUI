@@ -11,7 +11,8 @@ interface PlaceCreate {
     description: string,
     loreId: number,
     creationLoreDate: Date,
-    point: BackendPoint
+    point: BackendPoint,
+    isSecret: boolean
 }
 
 export default PlaceCreate;

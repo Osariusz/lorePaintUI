@@ -11,8 +11,21 @@ class PlaceApi {
         try {
             await api.post(this.baseBackend+path,placeCreate, {withCredentials: true});
         } catch (error: any) {
-            console.log("Place create failed" + error.message);
+            console.log("PlaceDTO create failed" + error.message);
         }
+    }
+
+    public static async getAllPlaces(loreId: number) {
+        let result = null;
+        const path = `/all/${loreId}`;
+        try {
+            result = await api.get(this.baseBackend+path, {withCredentials: true}).then((response) => {
+                return response.data;
+            });
+        } catch (error: any) {
+            console.log("Getting all places failed" + error.message);
+        }
+        return result;
     }
 }
 

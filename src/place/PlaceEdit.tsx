@@ -36,7 +36,8 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
                 description: description,
                 point: {x: point.getCoordinates().at(0), y: point.getCoordinates().at(1)},
                 creationLoreDate: new Date(),
-                loreId: props.loreId
+                loreId: props.loreId,
+                isSecret: false
             }
         )
     }
