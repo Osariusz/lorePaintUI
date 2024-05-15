@@ -121,7 +121,8 @@ const LorePage = () => {
                     return;
                 }
                 const coordinates = event.coordinate;
-                const place = new Place(coordinates, setPlaceEdit);
+                const placeDTO: PlaceDTO = {id: 0, x: coordinates.at(0)!, y: coordinates.at(1)!, name: "New Place"}
+                const place = new Place(placeDTO, setPlaceEdit);
                 editOverlay.setPosition(coordinates);
                 source.addFeature(place);
             });
@@ -130,7 +131,7 @@ const LorePage = () => {
 
         PlaceApi.getAllPlaces(idNumber).then((response: Array<PlaceDTO>) => {
             response.forEach((place: placeDTO) => {
-                const OLPlace = new Place([place.x, place.y], setPlaceEdit);
+                const OLPlace = new Place(place, setPlaceEdit);
                 source.addFeature(OLPlace);
             })
         })

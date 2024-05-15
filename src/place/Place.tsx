@@ -2,16 +2,15 @@ import Point from "ol/geom/Point";
 import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
 import {Coordinate} from "ol/coordinate";
+import PlaceDTO from "../types/PlaceDTO";
 
 class Place extends Feature {
     private setPlaceEdit: any;
-    constructor(position: Coordinate, setPlaceEdit: any, size: Coordinate = [50,50], link: string = "default") {
+    constructor(place: PlaceDTO, setPlaceEdit: any) {
         super({
-            geometry: new Point(position),
+            geometry: new Point([place.x,place.y]),
         });
-        if(link === "default") {
-            link = "https://www.svgrepo.com/show/314953/place-marker.svg"
-        }
+        let link = "https://www.svgrepo.com/show/314953/place-marker.svg"
         //TODO: add size change to style
         let iconStyles = new Style({image: new Icon({
                 src: link

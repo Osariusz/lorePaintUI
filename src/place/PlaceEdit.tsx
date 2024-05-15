@@ -1,7 +1,7 @@
 import React, {forwardRef} from 'react';
 import Place from "./Place";
 import Point from "ol/geom/Point";
-import {Button, TextField} from "@mui/material";
+import {Button, Checkbox, FormControlLabel, TextField} from "@mui/material";
 import axios from "axios";
 import placeApi from "../utils/PlaceApi";
 
@@ -19,12 +19,16 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
 
     const [name, setName] = React.useState("");
     const [description, setDescription] = React.useState("");
+    const [isSecret, setIsSecret] = React.useState(false);
 
     const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
     }
     const onDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setDescription(e.target.value);
+    }
+    const onIsSecretChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setIsSecret(e.target.checked);
     }
 
     const submit = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -37,7 +41,7 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
                 point: {x: point.getCoordinates().at(0), y: point.getCoordinates().at(1)},
                 creationLoreDate: new Date(),
                 loreId: props.loreId,
-                isSecret: false
+                isSecret: isSecret
             }
         )
     }
@@ -66,7 +70,14 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
                autoFocus
                onChange={onDescriptionChange}
            />
-           Position: {position}
+           <div>Position: {position}</div>
+           <FormControlLabel
+               label = "Is secret?"
+               control={<Checkbox
+                   id="is secret checkbox"
+                   name="is secret checkbox"
+                   onChange={onIsSecretChange}
+               />}/>
            <Button
                type="submit"
                fullWidth
