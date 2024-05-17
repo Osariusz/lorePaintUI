@@ -27,6 +27,7 @@ import Cursor from "../types/Cursor";
 import {defaults, MousePosition} from "ol/control";
 import placeDTO from "../types/PlaceDTO";
 import PlaceDTO from "../types/PlaceDTO";
+import CursorDTO from "../types/CursorDTO";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -50,14 +51,63 @@ const LorePage = () => {
     const mapRef = useRef<HTMLDivElement>(null);
     const map = useRef<Map | null>(null);
     const [placeEdit, setPlaceEdit] = useState(null);
-    const [userCursors, setUserCursor] = useState<Cursor[]>([{id: 0, name:"zenek333",color:"red"}]);
-    const userCursorsRef = useRef<any[]>([]);
-
-    const [cursorOverlay, setCursorOverlay] = useState<Overlay>();
+    const [userCursors, setUserCursors] = useState<Cursor[]>([]);
+    const userCursorsRef = useRef<Array<HTMLDivElement | null>>([]);
 
     const editElement = useRef<HTMLDivElement>(null);
 
     const idNumber = Number(id);
+
+    useEffect(() => {
+        console.log("usef");
+        console.log(userCursors);
+        userCursorsRef.current = userCursorsRef.current.slice(0, userCursors.length);
+        console.log(userCursorsRef.current);
+    }, [userCursors]);
+
+    function returnCreateUserCursor(name: string): Cursor {
+        let localUserCursors = [...userCursors];
+        let newCursor = {
+            id: localUserCursors.length,
+            name:name,
+            color:"red",
+            overlay: undefined
+        };
+        localUserCursors.push(newCursor)
+        setUserCursors(localUserCursors);
+        return newCursor;
+    }
+
+    function getUserCursor(name: string): Cursor {
+        let userCursor: Cursor | undefined = userCursors.find(userCursor => {
+            return userCursor.name == name;
+        });
+        if(!userCursor) {
+            console.log("no cursor?");
+            return returnCreateUserCursor(name);
+        }
+        return userCursor;
+    }
+
+    function returnCreateCursorOverlay(name: string): Overlay | undefined {
+        let cursor = getUserCursor(name);
+        const localCursorOverlay = new Overlay(({
+            element: userCursorsRef.current[cursor.id]!
+        }));
+        cursor.overlay = localCursorOverlay;
+        map.current!.addOverlay(localCursorOverlay);
+        return localCursorOverlay;
+    }
+
+    function getCursorOverlay(name: string): Overlay | undefined {
+        let overlay = getUserCursor(name)?.overlay;
+        if(overlay) {
+           return overlay;
+        }
+        else {
+            return returnCreateCursorOverlay(name);
+        }
+    }
 
     function loadLore() {
         LoreApi.getLoreById(idNumber).then(response => {
@@ -100,13 +150,8 @@ const LorePage = () => {
                 },
             },
         }));
-        const localCursorOverlay = new Overlay(({
-            element: userCursorsRef.current[0]!
-        }));
-        setCursorOverlay(localCursorOverlay);
 
         map.current.addOverlay(editOverlay);
-        map.current.addOverlay(localCursorOverlay!);
 
         map.current.on('click', (event) => {
             let feature = map.current?.forEachFeatureAtPixel(event.pixel,
@@ -138,16 +183,17 @@ const LorePage = () => {
 
     }
 
-    useEffect(() => {
-        userCursorsRef.current = userCursorsRef.current.slice(0, userCursors.length);
-    }, [userCursors]);
-
     useSubscription(`/api/lore/${id}/get_mouse`, (message) => {
-        console.log(message);
-        if(cursorOverlay) {
-            const coordinates = JSON.parse(message.body);
-            cursorOverlay!.setPosition(coordinates);
+        const mouseCursorDTO: CursorDTO = JSON.parse(message.body);
+        let overlay = getCursorOverlay(mouseCursorDTO.username);
+        if(!overlay) {
+            overlay = returnCreateCursorOverlay(mouseCursorDTO.username);
         }
+        console.log("eeeeeeeeeeeeeeee");
+        console.log(overlay);
+        overlay!.setPosition(mouseCursorDTO.coordinates);
+        console.log(mouseCursorDTO);
+        console.log(userCursorsRef.current);
     });
 
     const stompClient = useStompClient();
@@ -178,12 +224,12 @@ const LorePage = () => {
 
 
     return <StyledContainer>
+            <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber}/>
             {
                 userCursors.map(((cursor, i) => (
-                <UserCursor key={i} color={"red"} ref={el => userCursorsRef.current[i] = el}/>
+                    <UserCursor key={i} color={"red"} name={cursor.name} ref={(el: HTMLDivElement | null) => userCursorsRef.current[i] = el}/>
                 )))
             }
-            <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber}/>
             <div ref={mapRef} style={{width: '100%', height: '100vh'}}/>
     </StyledContainer>
         ;
