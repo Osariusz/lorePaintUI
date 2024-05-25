@@ -6,6 +6,7 @@ import LoreEntry from "./LoreEntry";
 import Lore from "../types/Lore";
 import {useEffect, useState} from "react";
 import LoreApi from "../utils/LoreApi";
+import LoreAdd from "./LoreAdd";
 
 
 const StyledContainer = styled(Container)`
@@ -29,7 +30,9 @@ const BrowsePage = () => {
 
     return <StyledContainer maxWidth={false}>
         {lores.map(lore => (<LoreEntry key={lore.id} lore={lore}/>))}
-    <div style={{ width: '100%', height: '100vh' }} />
+        <LoreAdd/>
+    <div style={{ height: '100vh' }} />
+
     </StyledContainer>;
 };
 
