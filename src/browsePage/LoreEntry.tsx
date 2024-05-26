@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 import Lore from "../types/Lore";
-import {Button, Grid} from "@mui/material";
+import {Button, Grid, TextField} from "@mui/material";
 import LoreButton from "../utils/LoreButton";
 import React, {useState} from "react";
 import {Navigate} from "react-router-dom";
+import LoreApi from "../utils/LoreApi";
 
 interface LoreEntryProps {
     lore: Lore
@@ -41,8 +42,18 @@ const LoreEntry = (props: LoreEntryProps) => {
     const { lore } = props;
     const [loreClicked, setLoreClicked] = useState(false);
 
+    const [username, setUsername] = useState("");
+
     const onLoreClick = () => {
         setLoreClicked(true);
+    }
+
+    const onAddUserClicked = () => {
+        LoreApi.addUser(lore.id, username);
+    }
+
+    const onUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUsername(e.target.value);
     }
 
     return (<>
@@ -56,6 +67,26 @@ const LoreEntry = (props: LoreEntryProps) => {
                 <LoreDescription>{lore.description}</LoreDescription>
                 <LoreButton onClick={onLoreClick} buttonJustify={'right'} style={{backgroundColor: '#AC9C7A', color: '#66573D', margin: "1vh"}}>Join</LoreButton>
             </Grid>
+          <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="user to add"
+              label="User to Add"
+              name="user to add"
+              autoFocus
+              onChange={onUsernameChange}
+          />
+          <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={onAddUserClicked}
+          >
+            Add User
+          </Button>
         </StyledContainer>}
     </>);
 };

@@ -34,6 +34,15 @@ class LoreApi {
         }
     }
 
+    public static async addUser(id: number, username: string) {
+        const path = `/${id}/add_user`;
+        try {
+            await api.post(this.baseBackend+path, {username: username}, {withCredentials: true});
+        } catch (error: any) {
+            console.log("Lore add user failed" + error.message);
+        }
+    }
+
     public static async getAllLores(): Promise<Lore[]> {
         const path = `/available`
         let result: Lore[] = [];
