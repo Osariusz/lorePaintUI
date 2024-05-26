@@ -2,7 +2,7 @@ import axios from "axios";
 import {getCookie} from "typescript-cookie";
 import { io } from "socket.io-client";
 
-const backendURL = "http://localhost:8080";
+export const backendURL: string = process.env.REACT_APP_BACKEND_URL ? process.env.REACT_APP_BACKEND_URL : "http://localhost:8080";
 
 const api = axios.create({
     baseURL: backendURL

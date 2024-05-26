@@ -1,6 +1,7 @@
 import Lore from "../types/Lore";
 import axios from "axios";
 import api from "./Api";
+import LoreCreate from "../types/LoreCreate";
 
 class LoreApi {
 
@@ -22,6 +23,15 @@ class LoreApi {
             console.log("Lore get failed" + error.message);
         }
         return result;
+    }
+
+    public static async createLore(loreCreate: LoreCreate) {
+        const path = `/create`;
+        try {
+            await api.post(this.baseBackend+path,loreCreate, {withCredentials: true});
+        } catch (error: any) {
+            console.log("Lore create failed" + error.message);
+        }
     }
 
     public static async getAllLores(): Promise<Lore[]> {
