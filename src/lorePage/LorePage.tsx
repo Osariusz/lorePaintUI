@@ -50,9 +50,10 @@ const LorePage = () => {
     const { id } = useParams();
     const mapRef = useRef<HTMLDivElement>(null);
     const map = useRef<Map | null>(null);
+    const [forceRerender, setForceRerender] = useState(0);
     const [placeEdit, setPlaceEdit] = useState(null);
     const [userCursors, setUserCursors] = useState<Cursor[]>([]);
-    const userCursorsRef = useRef<Array<HTMLDivElement | null>>([]);
+    const userCursorsRef = useRef<Array<HTMLDivElement | null>>(Array(1).fill(null));
 
     const editElement = useRef<HTMLDivElement>(null);
 
@@ -61,52 +62,36 @@ const LorePage = () => {
     useEffect(() => {
         console.log("usef");
         console.log(userCursors);
-        userCursorsRef.current = userCursorsRef.current.slice(0, userCursors.length);
         console.log(userCursorsRef.current);
     }, [userCursors]);
 
     function returnCreateUserCursor(name: string): Cursor {
         let localUserCursors = [...userCursors];
+        const overlay = new Overlay(({
+            element: userCursorsRef.current[localUserCursors.length]!,
+        }));
         let newCursor = {
             id: localUserCursors.length,
             name:name,
             color:"red",
             overlay: undefined
         };
-        localUserCursors.push(newCursor)
+
+        localUserCursors.push(newCursor);
         setUserCursors(localUserCursors);
         return newCursor;
     }
 
-    function getUserCursor(name: string): Cursor {
+    function getUserCursor(name: string): Cursor | null {
         let userCursor: Cursor | undefined = userCursors.find(userCursor => {
             return userCursor.name == name;
         });
         if(!userCursor) {
             console.log("no cursor?");
-            return returnCreateUserCursor(name);
+            returnCreateUserCursor(name);
+            return null;
         }
         return userCursor;
-    }
-
-    function returnCreateCursorOverlay(name: string): Overlay | undefined {
-        let cursor = getUserCursor(name);
-        const localCursorOverlay = new Overlay(({
-            element: userCursorsRef.current[cursor.id]!
-        }));
-        cursor.overlay = localCursorOverlay;
-        map.current!.addOverlay(localCursorOverlay);
-        return localCursorOverlay;
-    }
-
-    function getCursorOverlay(name: string): Overlay | undefined {
-        let overlay = getUserCursor(name)?.overlay;
-        if(overlay) {
-           return overlay;
-        }
-        else {
-            return returnCreateCursorOverlay(name);
-        }
     }
 
     function loadLore() {
@@ -151,6 +136,15 @@ const LorePage = () => {
             },
         }));
 
+
+        // if(!userCursors.at(0)!.overlay) {
+        //     userCursors.at(0)!.overlay = new Overlay(({
+        //         element: userCursorsRef.current[0]!
+        //     }))
+        // }
+        // map.current?.addOverlay(userCursors.at(0)!.overlay!);
+
+
         map.current.addOverlay(editOverlay);
 
         map.current.on('click', (event) => {
@@ -183,17 +177,42 @@ const LorePage = () => {
 
     }
 
+    function setCursorOverlay(cursor_name: string, overlay: Overlay) {
+        let cursors = [...userCursors];
+        for(let cursor of cursors) {
+            if(cursor.name == cursor_name) {
+                cursor.overlay = overlay;
+            }
+        }
+        setUserCursors(cursors);
+    }
+
     useSubscription(`/api/lore/${id}/get_mouse`, (message) => {
         const mouseCursorDTO: CursorDTO = JSON.parse(message.body);
-        let overlay = getCursorOverlay(mouseCursorDTO.username);
-        if(!overlay) {
-            overlay = returnCreateCursorOverlay(mouseCursorDTO.username);
+        let cursor = getUserCursor(mouseCursorDTO.username);
+        if(cursor) {
+            let overlay = cursor.overlay;
+
+            console.log("move with overlay");
+            console.log(overlay);
+            if(!overlay) {
+                console.log("change overlay to");
+                console.log(cursor.id);
+                userCursorsRef.current = userCursorsRef.current.slice(0, cursor.id+1);
+                console.log(userCursorsRef);
+                setCursorOverlay(mouseCursorDTO.username, new Overlay(({
+                    element: userCursorsRef.current[cursor.id]!
+                })));
+                console.log(userCursorsRef);
+            }
+            if(overlay && map.current) {
+                overlay!.setPosition(mouseCursorDTO.coordinates);
+                if(!overlay.getMap()) {
+                    map.current?.addOverlay(overlay);
+                }
+            }
+
         }
-        console.log("eeeeeeeeeeeeeeee");
-        console.log(overlay);
-        overlay!.setPosition(mouseCursorDTO.coordinates);
-        console.log(mouseCursorDTO);
-        console.log(userCursorsRef.current);
     });
 
     const stompClient = useStompClient();
