@@ -1,30 +1,23 @@
 import React, {useEffect, useRef, useState} from "react";
 import Map from "ol/Map";
 import View from "ol/View";
-import {Projection, toLonLat} from "ol/proj";
+import {Projection} from "ol/proj";
 import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
 import Place from "../place/Place";
 import ImageLayer from "ol/layer/Image";
 import Static from "ol/source/ImageStatic";
 import {getCenter} from "ol/extent";
-import Feature from "ol/Feature";
 import PlaceEdit from "../place/PlaceEdit";
 import styled from "@emotion/styled";
 import {Container} from "@mui/material";
-import axios from "axios";
 import {useParams} from "react-router-dom";
 import LoreApi from "../utils/LoreApi";
 import PlaceApi from "../utils/PlaceApi";
-import PlaceCreate from "../types/PlaceCreate";
-import Point from "ol/geom/Point";
 import {Overlay} from "ol";
-import {Coordinate, createStringXY, toStringHDMS} from "ol/coordinate";
-import {StompSessionProvider, useStompClient, useSubscription} from "react-stomp-hooks";
+import {useStompClient, useSubscription} from "react-stomp-hooks";
 import UserCursor from "../users/UserCursor";
-import userCursor from "../users/UserCursor";
 import Cursor from "../types/Cursor";
-import {defaults, MousePosition} from "ol/control";
 import placeDTO from "../types/PlaceDTO";
 import PlaceDTO from "../types/PlaceDTO";
 import CursorDTO from "../types/CursorDTO";
@@ -50,26 +43,16 @@ const LorePage = () => {
     const { id } = useParams();
     const mapRef = useRef<HTMLDivElement>(null);
     const map = useRef<Map | null>(null);
-    const [forceRerender, setForceRerender] = useState(0);
     const [placeEdit, setPlaceEdit] = useState(null);
     const [userCursors, setUserCursors] = useState<Cursor[]>([]);
-    const userCursorsRef = useRef<Array<HTMLDivElement | null>>(Array(1).fill(null));
+    const userCursorsRef = useRef<Array<HTMLDivElement | null>>([]);
 
     const editElement = useRef<HTMLDivElement>(null);
 
     const idNumber = Number(id);
 
-    useEffect(() => {
-        console.log("usef");
-        console.log(userCursors);
-        console.log(userCursorsRef.current);
-    }, [userCursors]);
-
     function returnCreateUserCursor(name: string): Cursor {
         let localUserCursors = [...userCursors];
-        const overlay = new Overlay(({
-            element: userCursorsRef.current[localUserCursors.length]!,
-        }));
         let newCursor = {
             id: localUserCursors.length,
             name:name,
@@ -87,7 +70,6 @@ const LorePage = () => {
             return userCursor.name == name;
         });
         if(!userCursor) {
-            console.log("no cursor?");
             returnCreateUserCursor(name);
             return null;
         }
@@ -136,15 +118,6 @@ const LorePage = () => {
             },
         }));
 
-
-        // if(!userCursors.at(0)!.overlay) {
-        //     userCursors.at(0)!.overlay = new Overlay(({
-        //         element: userCursorsRef.current[0]!
-        //     }))
-        // }
-        // map.current?.addOverlay(userCursors.at(0)!.overlay!);
-
-
         map.current.addOverlay(editOverlay);
 
         map.current.on('click', (event) => {
@@ -192,18 +165,10 @@ const LorePage = () => {
         let cursor = getUserCursor(mouseCursorDTO.username);
         if(cursor) {
             let overlay = cursor.overlay;
-
-            console.log("move with overlay");
-            console.log(overlay);
             if(!overlay) {
-                console.log("change overlay to");
-                console.log(cursor.id);
-                userCursorsRef.current = userCursorsRef.current.slice(0, cursor.id+1);
-                console.log(userCursorsRef);
                 setCursorOverlay(mouseCursorDTO.username, new Overlay(({
                     element: userCursorsRef.current[cursor.id]!
                 })));
-                console.log(userCursorsRef);
             }
             if(overlay && map.current) {
                 overlay!.setPosition(mouseCursorDTO.coordinates);
@@ -225,7 +190,7 @@ const LorePage = () => {
     }
 
     const handleMouseMove = (event: MouseEvent) => {
-        const coordinates =  map.current?.getEventCoordinate(event);//{x: event.clientX, y: event.clientY};
+        const coordinates =  map.current?.getEventCoordinate(event);
         const coordinatesString = JSON.stringify(coordinates);
         publishMessage(coordinatesString);
     }
