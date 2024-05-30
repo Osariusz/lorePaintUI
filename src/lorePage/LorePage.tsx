@@ -56,12 +56,17 @@ const LorePage = () => {
 
     const onYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCurrentYear(Number(e.target.value));
-        vectorSource!.clear();
-        loadPlaces(vectorSource!);
+    }
+
+    const onYearSubmit = (e: any) => {
+        if(e.keyCode == 13) {
+            vectorSource!.clear();
+            loadPlaces(vectorSource!);
+        }
     }
 
     function loadPlaces(source: VectorSource) {
-        PlaceApi.getAllPlaces(idNumber).then((response: Array<PlaceDTO>) => {
+        PlaceApi.getAllPlacesBefore(idNumber, currentYear).then((response: Array<PlaceDTO>) => {
             response.forEach((place: placeDTO) => {
                 const OLPlace = new Place(place, setPlaceEdit);
                 source.addFeature(OLPlace);
@@ -233,6 +238,7 @@ const LorePage = () => {
             autoComplete="year"
             autoFocus
             onChange={onYearChange}
+            onKeyDown={onYearSubmit}
         />
             <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber}/>
             {
