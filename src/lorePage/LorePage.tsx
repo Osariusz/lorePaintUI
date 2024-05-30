@@ -10,7 +10,7 @@ import Static from "ol/source/ImageStatic";
 import {getCenter} from "ol/extent";
 import PlaceEdit from "../place/PlaceEdit";
 import styled from "@emotion/styled";
-import {Container} from "@mui/material";
+import {Container, TextField} from "@mui/material";
 import {useParams} from "react-router-dom";
 import LoreApi from "../utils/LoreApi";
 import PlaceApi from "../utils/PlaceApi";
@@ -44,12 +44,30 @@ const LorePage = () => {
     const mapRef = useRef<HTMLDivElement>(null);
     const map = useRef<Map | null>(null);
     const [placeEdit, setPlaceEdit] = useState(null);
+    const [currentYear, setCurrentYear] = useState(2024);
     const [userCursors, setUserCursors] = useState<Cursor[]>([]);
     const userCursorsRef = useRef<Array<HTMLDivElement | null>>([]);
 
     const editElement = useRef<HTMLDivElement>(null);
 
     const idNumber = Number(id);
+
+    const [vectorSource, setVectorSource] = useState<VectorSource | null>(null);
+
+    const onYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCurrentYear(Number(e.target.value));
+        vectorSource!.clear();
+        loadPlaces(vectorSource!);
+    }
+
+    function loadPlaces(source: VectorSource) {
+        PlaceApi.getAllPlaces(idNumber).then((response: Array<PlaceDTO>) => {
+            response.forEach((place: placeDTO) => {
+                const OLPlace = new Place(place, setPlaceEdit);
+                source.addFeature(OLPlace);
+            })
+        })
+    }
 
     function returnCreateUserCursor(name: string): Cursor {
         let localUserCursors = [...userCursors];
@@ -87,6 +105,7 @@ const LorePage = () => {
         let vectorLayer = new VectorLayer({
             source: source
         });
+        setVectorSource(source);
         map.current = new Map({
             target: mapRef.current!,
             layers: [
@@ -141,12 +160,7 @@ const LorePage = () => {
 
         });
 
-        PlaceApi.getAllPlaces(idNumber).then((response: Array<PlaceDTO>) => {
-            response.forEach((place: placeDTO) => {
-                const OLPlace = new Place(place, setPlaceEdit);
-                source.addFeature(OLPlace);
-            })
-        })
+        loadPlaces(source);
 
     }
 
@@ -208,6 +222,18 @@ const LorePage = () => {
 
 
     return <StyledContainer>
+        <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="year"
+            label="Year"
+            name="year"
+            autoComplete="year"
+            autoFocus
+            onChange={onYearChange}
+        />
             <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber}/>
             {
                 userCursors.map(((cursor, i) => (
