@@ -4,21 +4,33 @@ import Point from "ol/geom/Point";
 import {Button, Checkbox, FormControlLabel, TextField} from "@mui/material";
 import axios from "axios";
 import placeApi from "../utils/PlaceApi";
+import api from "../utils/Api";
 
 interface PlaceEditProps {
     place: Place | null,
-    loreId: number
+    loreId: number,
+    name?: string,
+    description?: string,
+    loreYear?: number
+}
+
+const defaultProps = {
+    name: "",
+    description: "",
+    loreYear: 2024
 }
 
 const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
+    props = {...defaultProps, ...props};
     let position = "";
     if(props && props.place) {
         let geometry = props.place.getGeometry() as Point;
         position = geometry.getCoordinates().toString();
     }
-
-    const [name, setName] = React.useState("");
-    const [description, setDescription] = React.useState("");
+    console.log(props);
+    const [name, setName] = React.useState(props.name);
+    const [description, setDescription] = React.useState(props.description);
+    const [year, setYear] = React.useState(props.loreYear);
     const [isSecret, setIsSecret] = React.useState(false);
 
     const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +39,9 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
     const onDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setDescription(e.target.value);
     }
+    const onYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setYear(parseInt(e.target.value));
+    }
     const onIsSecretChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsSecret(e.target.checked);
     }
@@ -34,12 +49,14 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
     const submit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const point = props.place?.getGeometry() as Point;
+        let date = new Date(`${year!.toString().padStart(4, '0')}-01-01` );
+        let dateString = date.toISOString();
         await placeApi.createPlace(
             {
-                name: name,
-                description: description,
+                name: name!,
+                description: description!,
                 point: {x: point.getCoordinates().at(0), y: point.getCoordinates().at(1)},
-                creationLoreDate: new Date(),
+                creationLoreDate: date,
                 loreId: props.loreId,
                 isSecret: isSecret
             }
@@ -48,6 +65,7 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
 
     return (
        <div ref={ref} style={{background: "white"}}>
+
            <TextField
                variant="outlined"
                margin="normal"
@@ -57,6 +75,7 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
                label="Name"
                name="place name"
                autoFocus
+               value={props.name}
                onChange={onNameChange}
            />
            <TextField
@@ -69,6 +88,17 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
                name="place description"
                autoFocus
                onChange={onDescriptionChange}
+           />
+           <TextField
+               variant="outlined"
+               margin="normal"
+               required
+               fullWidth
+               id="start year"
+               label="Start Year"
+               name="start year"
+               autoFocus
+               onChange={onYearChange}
            />
            <div>Position: {position}</div>
            <FormControlLabel
