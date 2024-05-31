@@ -14,7 +14,7 @@ const UserCursor = forwardRef( (props: UserCursorProps, ref: any) => {
 
         return (
             <div ref={ref} style={{background: "white", userSelect: "none"}}>
-                {props.name}
+                {/*{props.name}*/}
             </div>
         );
     }

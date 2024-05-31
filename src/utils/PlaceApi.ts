@@ -41,6 +41,19 @@ class PlaceApi {
         }
         return result;
     }
+
+    public static async getPlace(id: number) {
+        let result = null;
+        const path = `/${id}`;
+        try {
+            result = await api.get(this.baseBackend+path, {withCredentials: true}).then((response) => {
+                return response.data;
+            });
+        } catch (error: any) {
+            console.log("Getting place failed" + error.message);
+        }
+        return result;
+    }
 }
 
 export default PlaceApi;

@@ -3,9 +3,12 @@ import Feature from "ol/Feature";
 import {Icon, Style} from "ol/style";
 import {Coordinate} from "ol/coordinate";
 import PlaceDTO from "../types/PlaceDTO";
+import PlaceUpdateApi from "../utils/PlaceUpdateApi";
 
 class Place extends Feature {
     private setPlaceEdit: any;
+    private id: number;
+
     constructor(place: PlaceDTO, setPlaceEdit: any) {
         super({
             geometry: new Point([place.x,place.y]),
@@ -22,7 +25,12 @@ class Place extends Feature {
             }
         );
         this.setPlaceEdit = setPlaceEdit;
+        this.id = place.id;
         setPlaceEdit(this);
+    }
+
+    public getBackendId(): number {
+        return this.id;
     }
 
     edit = () => {

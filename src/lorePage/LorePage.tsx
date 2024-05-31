@@ -21,6 +21,7 @@ import Cursor from "../types/Cursor";
 import placeDTO from "../types/PlaceDTO";
 import PlaceDTO from "../types/PlaceDTO";
 import CursorDTO from "../types/CursorDTO";
+import PlaceUpdateApi from "../utils/PlaceUpdateApi";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -55,6 +56,7 @@ const LorePage = () => {
     const [vectorSource, setVectorSource] = useState<VectorSource | null>(null);
 
     const onYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPlaceEdit(null);
         setCurrentYear(Number(e.target.value));
     }
 
@@ -151,12 +153,13 @@ const LorePage = () => {
                 });
 
             vectorLayer.getFeatures(event.pixel).then(function (feature) {
+                const coordinates = event.coordinate;
                 if (feature.length > 0 && feature[0] instanceof Place) {
                     let place: Place = feature[0] as Place;
                     place.edit();
+                    editOverlay.setPosition(coordinates);
                     return;
                 }
-                const coordinates = event.coordinate;
                 const placeDTO: PlaceDTO = {id: 0, x: coordinates.at(0)!, y: coordinates.at(1)!, name: "New Place"}
                 const place = new Place(placeDTO, setPlaceEdit);
                 editOverlay.setPosition(coordinates);
@@ -240,7 +243,7 @@ const LorePage = () => {
             onChange={onYearChange}
             onKeyDown={onYearSubmit}
         />
-            <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber}/>
+            <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber} currentLoreYear={currentYear}/>
             {
                 userCursors.map(((cursor, i) => (
                     <UserCursor key={i} color={"red"} name={cursor.name} ref={(el: HTMLDivElement | null) => userCursorsRef.current[i] = el}/>

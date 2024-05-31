@@ -1,12 +1,14 @@
 import Lore from "../types/Lore";
 import api from "./Api";
 import PlaceCreate from "../types/PlaceCreate";
+import PlaceUpdateDTO from "../types/PlaceUpdateDTO";
+import Place from "../place/Place";
 
 class PlaceUpdateApi {
 
     static baseBackend = "/api/placeUpdate";
 
-    public static async getLastPlaceUpdate(placeId: number, beforeYear: number): Promise<any> {
+    public static async getLastPlaceUpdate(placeId: number, beforeYear: number): Promise<PlaceUpdateDTO> {
         let result = null;
         const path = `/last/${placeId}`;
         try {
@@ -19,6 +21,17 @@ class PlaceUpdateApi {
             console.log("Last place update get failed" + error.message);
         }
         return result;
+    }
+
+    public static async createPlaceUpdate(placeId: number, placeUpdate: PlaceUpdateDTO): Promise<any> {
+        const path = `/${placeId}/create`;
+        try {
+            await api.post(this.baseBackend+path,placeUpdate, {withCredentials: true}).then((response) => {
+                return response.data;
+            });
+        } catch (error: any) {
+            console.log("Last place update get failed" + error.message);
+        }
     }
 }
 
