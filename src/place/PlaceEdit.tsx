@@ -48,9 +48,9 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
             })
             PlaceUpdateApi.getLastPlaceUpdate(props.place.getBackendId(), props.currentLoreYear).then(
                 response => {
-                    console.log(response);
+                    let date = new Date(response.lore_date);
                     setDescription(response.description);
-                    setYear(response.lore_date.getFullYear);
+                    setYear(date.getFullYear());
                 }
             );
         }

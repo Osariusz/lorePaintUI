@@ -21,7 +21,7 @@ class PlaceApi {
         try {
             let date = new Date(`${beforeYear.toString().padStart(4, '0')}-01-01` );
             let dateString = date.toISOString();
-            result = await api.post(this.baseBackend+path,{date: dateString}, {withCredentials: true}).then((response) => {
+            result = await api.post(this.baseBackend+path,{lore_date: dateString}, {withCredentials: true}).then((response) => {
                 return response.data;
             });
         } catch (error: any) {
