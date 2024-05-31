@@ -13,8 +13,8 @@ interface UserCursorProps {
 const UserCursor = forwardRef( (props: UserCursorProps, ref: any) => {
 
         return (
-            <div ref={ref} style={{background: "white", userSelect: "none"}}>
-                {/*{props.name}*/}
+            <div ref={ref} style={{background: "white", userSelect: "none", pointerEvents: "none"}}>
+                {props.name}
             </div>
         );
     }
