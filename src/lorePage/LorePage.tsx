@@ -188,9 +188,11 @@ const LorePage = () => {
         if(cursor) {
             let overlay = cursor.overlay;
             if(!overlay) {
-                setCursorOverlay(mouseCursorDTO.username, new Overlay(({
-                    element: userCursorsRef.current[cursor.id]!
-                })));
+                let newOverlay = new Overlay(({
+                    element: userCursorsRef.current[cursor.id]!,
+                    stopEvent: false
+                }));
+                setCursorOverlay(mouseCursorDTO.username, newOverlay);
             }
             if(overlay && map.current) {
                 overlay!.setPosition(mouseCursorDTO.coordinates);
