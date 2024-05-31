@@ -43,7 +43,7 @@ class LoreApi {
         }
     }
 
-    public static async getAllLores(): Promise<Lore[]> {
+    public static async getAvailableLores(): Promise<Lore[]> {
         const path = `/available`
         let result: Lore[] = [];
         try {
@@ -52,6 +52,19 @@ class LoreApi {
             });
         } catch (error: any) {
             console.log("Lores available get failed" + error.message);
+        }
+        return result;
+    }
+
+    public static async getAllLores(): Promise<Lore[]> {
+        const path = `/all`
+        let result: Lore[] = [];
+        try {
+            result = await api.get(this.baseBackend+path, {withCredentials: true}).then((response) => {
+                return response.data;
+            });
+        } catch (error: any) {
+            console.log("Lores all get failed" + error.message);
         }
         return result;
     }

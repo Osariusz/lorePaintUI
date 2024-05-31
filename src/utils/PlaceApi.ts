@@ -29,6 +29,18 @@ class PlaceApi {
         }
         return result;
     }
+    public static async getAllPlaces() {
+        let result = [];
+        const path = `/all`;
+        try {
+            result = await api.get(this.baseBackend+path, {withCredentials: true}).then((response) => {
+                return response.data;
+            });
+        } catch (error: any) {
+            console.log("Getting all places before date failed" + error.message);
+        }
+        return result;
+    }
 }
 
 export default PlaceApi;

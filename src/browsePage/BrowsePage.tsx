@@ -23,7 +23,7 @@ const BrowsePage = () => {
     const [lores, setLores] = useState<Lore[]>([]);
 
     useEffect(() => {
-        LoreApi.getAllLores().then((response) => {
+        LoreApi.getAvailableLores().then((response) => {
             setLores(response);
         });
     }, [])
