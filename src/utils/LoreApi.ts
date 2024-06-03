@@ -2,6 +2,7 @@ import Lore from "../types/Lore";
 import axios from "axios";
 import api from "./Api";
 import LoreCreate from "../types/LoreCreate";
+import MapUpdate from "../types/MapUpdate";
 
 class LoreApi {
 
@@ -21,6 +22,25 @@ class LoreApi {
 
         } catch (error: any) {
             console.log("Lore get failed" + error.message);
+        }
+        return result;
+    }
+
+    public static async getMapByLoreId(id: any, beforeYear: number): Promise<MapUpdate | null> {
+        let result = null;
+        if(isNaN(id)) {
+            console.log("Lore get is NaN");
+            return result;
+        }
+        const path = `/${id}/get_last_map_update`;
+        try {
+            let date = new Date(`${beforeYear.toString().padStart(4, '0')}-01-01` );
+            let dateString = date.toISOString();
+            result = await api.post(this.baseBackend+path,{lore_date: dateString}, {withCredentials: true}).then((response) => {
+                return response.data;
+            });
+        } catch (error: any) {
+            console.log("Lore map get failed" + error.message);
         }
         return result;
     }

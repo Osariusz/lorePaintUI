@@ -6,6 +6,7 @@ const LoreAddDetails = forwardRef( () => {
 
         const [name, setName] = React.useState("");
         const [description, setDescription] = React.useState("");
+        const [mapPath, setMapPath] = React.useState("");
 
         const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             setName(e.target.value);
@@ -13,13 +14,17 @@ const LoreAddDetails = forwardRef( () => {
         const onDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             setDescription(e.target.value);
         }
+        const onMapPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            setMapPath(e.target.value);
+        }
 
         const submit = async (e: React.MouseEvent<HTMLButtonElement>) => {
             e.preventDefault();
             await loreApi.createLore(
                 {
                     name: name,
-                    description: description
+                    description: description,
+                    map_path: mapPath
                 }
             )
         }
@@ -47,6 +52,17 @@ const LoreAddDetails = forwardRef( () => {
                     name="place description"
                     autoFocus
                     onChange={onDescriptionChange}
+                />
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="map path"
+                    label="Map Path"
+                    name="map path"
+                    autoFocus
+                    onChange={onMapPathChange}
                 />
                 <Button
                     type="submit"

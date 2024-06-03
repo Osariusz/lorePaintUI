@@ -22,6 +22,7 @@ import placeDTO from "../types/PlaceDTO";
 import PlaceDTO from "../types/PlaceDTO";
 import CursorDTO from "../types/CursorDTO";
 import PlaceUpdateApi from "../utils/PlaceUpdateApi";
+import ImageSource from "ol/source/Image";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -48,22 +49,31 @@ const LorePage = () => {
     const [currentYear, setCurrentYear] = useState(2024);
     const [userCursors, setUserCursors] = useState<Cursor[]>([]);
     const userCursorsRef = useRef<Array<HTMLDivElement | null>>([]);
+    const [mapURL, setMapURL] = useState<string | undefined>(undefined);
 
     const editElement = useRef<HTMLDivElement>(null);
 
     const idNumber = Number(id);
 
     const [vectorSource, setVectorSource] = useState<VectorSource | null>(null);
+    const [imageSource, setImageSource] = useState<ImageLayer<Static> | null>(null);
 
     const onYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPlaceEdit(null);
         setCurrentYear(Number(e.target.value));
     }
 
+    const updateMap = () => {
+        LoreApi.getMapByLoreId(idNumber, currentYear).then(response => {
+            setMapURL(response?.picture_path);
+        });
+    }
+
     const onYearSubmit = (e: any) => {
         if(e.keyCode == 13) {
             vectorSource!.clear();
             loadPlaces(vectorSource!);
+            updateMap();
         }
     }
 
@@ -107,23 +117,36 @@ const LorePage = () => {
         })
     }
 
+    useEffect(() => {
+        imageSource?.setSource(new Static({
+            attributions: '© <a href="https://xkcd.com/license.html">xkcd</a>',
+            url: mapURL!,
+            projection: projection,
+            imageExtent: extent,
+        }));
+    }, [mapURL]);
+
     function loadMap() {
         const source = new VectorSource();
         let vectorLayer = new VectorLayer({
             source: source
         });
         setVectorSource(source);
+
+        const image = new ImageLayer({
+                source: new Static({
+                    attributions: '© <a href="https://xkcd.com/license.html">xkcd</a>',
+                    url: mapURL!,
+                    projection: projection,
+                    imageExtent: extent,
+                })
+            })
+        setImageSource(image);
+
         map.current = new Map({
             target: mapRef.current!,
             layers: [
-                new ImageLayer({
-                    source: new Static({
-                        attributions: '© <a href="https://xkcd.com/license.html">xkcd</a>',
-                        url: 'https://imgs.xkcd.com/comics/online_communities.png',
-                        projection: projection,
-                        imageExtent: extent,
-                    })
-                }),
+                image,
                 vectorLayer,
             ],
             view: new View({
@@ -224,6 +247,7 @@ const LorePage = () => {
     }, [stompClient?.connected]);
 
     useEffect(() => {
+        updateMap();
         if (!map.current && mapRef.current && editElement) {
             loadLore();
             loadMap();
