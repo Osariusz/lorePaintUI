@@ -42,7 +42,7 @@ const RegisterPage: React.FC = () => {
         {registered && <Navigate to="/login"/>}
         {!registered && <StyledContainer>
             <Typography variant="h4" component="h1">
-                Login
+                Register
             </Typography>
             <StyledForm noValidate autoComplete="off">
                 <TextField

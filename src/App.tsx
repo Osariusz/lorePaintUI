@@ -12,12 +12,7 @@ import {defaultProps} from "./types/Lore";
 import {StompSessionProvider} from "react-stomp-hooks";
 import Api, {backendURL} from "./utils/Api";
 import AdminPage from "./admin/AdmiPage";
-
-const lores = [
-    {...defaultProps,id: 0,name: "Ziemia",description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed nunc non felis placerat bibendum. Morbi vulputate at arcu nec convallis. In ullamcorper ligula vel massa sagittis, at malesuada odio molestie. Fusce vel est lectus. Sed aliquam pretium justo ut iaculis. Duis commodo orci eget luctus aliquet. Quisque et odio lacus. Ut sed iaculis lorem. Nunc auctor aliquam congue. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vestibulum pellentesque neque in eros sagittis elementum.",picturePath:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRq-_H3qxKQjW-ubcKlW0boiFOQ6tokXtYB3eCHLy18hQ&s"},
-    {...defaultProps,id: 1,name: "Biedorbis",description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed nunc non felis placerat bibendum. Morbi vulputate at arcu nec convallis. In ullamcorper ligula vel massa sagittis, at malesuada odio molestie. Fusce vel est lectus. Sed aliquam pretium justo ut iaculis. Duis commodo orci eget luctus aliquet. Quisque et odio lacus. Ut sed iaculis lorem. Nunc auctor aliquam congue. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vestibulum pellentesque neque in eros sagittis elementum.",picturePath:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRq-_H3qxKQjW-ubcKlW0boiFOQ6tokXtYB3eCHLy18hQ&s"}
-
-]
+import MainPage from "./MainPage";
 
 function App() {
   return (//<GlobalStyle/>
@@ -28,6 +23,7 @@ function App() {
               <Route path="/lore/:id" element={<StompSessionProvider url={backendURL+'/api/ws-endpoint'}><LorePage/></StompSessionProvider>}/>
               <Route path="/browse" element={<BrowsePage/>}/>
               <Route path="/admin" element={<AdminPage/>}/>
+              <Route path="/" element={<MainPage/>}/>
           </Routes>
       </BrowserRouter>
   );
