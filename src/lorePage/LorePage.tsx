@@ -121,7 +121,7 @@ const LorePage = () => {
         imageSource?.setSource(new Static({
             attributions: '© <a href="https://xkcd.com/license.html">xkcd</a>',
             url: mapURL!,
-            projection: projection,
+
             imageExtent: extent,
         }));
     }, [mapURL]);
@@ -137,10 +137,10 @@ const LorePage = () => {
                 source: new Static({
                     attributions: '© <a href="https://xkcd.com/license.html">xkcd</a>',
                     url: mapURL!,
-                    projection: projection,
                     imageExtent: extent,
                 })
             })
+
         setImageSource(image);
 
         map.current = new Map({
