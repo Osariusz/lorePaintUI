@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import './App.css';
 import {Container} from "@mui/material"; // Import your CSS
@@ -29,6 +29,7 @@ const MainPage: React.FC = () => {
                 <ul>
                     <li><Link to="/register">Register</Link></li>
                     <li><Link to="/login">Login</Link></li>
+                    <li><Link to="/logout">Log out</Link></li>
                     <li><Link to="/browse">Browse</Link></li>
                     <li><Link to="/admin">Admin</Link></li>
                 </ul>

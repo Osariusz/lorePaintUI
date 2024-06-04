@@ -38,6 +38,15 @@ class AuthApi {
             console.log("Register failed" + error.message);
         }
     }
+
+    public static async logout() {
+        const path = `/logout`;
+        try {
+            await api.post(this.baseBackend+path,{}, {withCredentials: true});
+        } catch (error: any) {
+            console.log("Logout failed" + error.message);
+        }
+    }
 }
 
 export default AuthApi;

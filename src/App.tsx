@@ -13,12 +13,14 @@ import {StompSessionProvider} from "react-stomp-hooks";
 import Api, {backendURL} from "./utils/Api";
 import AdminPage from "./admin/AdmiPage";
 import MainPage from "./MainPage";
+import Logout from "./logout/Logout";
 
 function App() {
   return (//<GlobalStyle/>
       <BrowserRouter>
           <Routes>
               <Route index path="/login" element={<LoginPage/>}/>
+              <Route index path="/logout" element={<Logout/>}/>
               <Route index path="/register" element={<RegisterPage/>}/>
               <Route path="/lore/:id" element={<StompSessionProvider url={backendURL+'/api/ws-endpoint'}><LorePage/></StompSessionProvider>}/>
               <Route path="/browse" element={<BrowsePage/>}/>
