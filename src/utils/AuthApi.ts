@@ -39,10 +39,13 @@ class AuthApi {
         }
     }
 
-    public static async logout() {
+    public static async logout(setLogout: any) {
         const path = `/logout`;
         try {
-            await api.post(this.baseBackend+path,{}, {withCredentials: true});
+            const response = await api.post(this.baseBackend+path,{}, {withCredentials: true});
+            if(response.status == 200) {
+                setLogout(true);
+            }
         } catch (error: any) {
             console.log("Logout failed" + error.message);
         }

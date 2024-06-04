@@ -26,7 +26,7 @@ const RegisterPage: React.FC = () => {
 
     const onLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        await AuthApi.logout();
+        await AuthApi.logout(setLogout);
     }
 
     return (<>
