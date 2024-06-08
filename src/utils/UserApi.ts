@@ -12,7 +12,7 @@ class UserApi {
                 return response.data;
             });
         } catch (error: any) {
-            console.log("Get all users failed" + error.message);
+            throw new Error("Get all users failed" + error.message);
         }
         return result;
     }

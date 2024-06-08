@@ -11,8 +11,7 @@ class LoreApi {
     public static async getLoreById(id: any): Promise<Lore | null> {
         let result = null;
         if(isNaN(id)) {
-            console.log("Lore get is NaN");
-            return result;
+            throw new Error("Lore get is NaN");
         }
         const path = `/${id}`;
         try {
@@ -21,7 +20,7 @@ class LoreApi {
             })
 
         } catch (error: any) {
-            console.log("Lore get failed" + error.message);
+            throw new Error("Lore get failed" + error.message);
         }
         return result;
     }
@@ -29,8 +28,7 @@ class LoreApi {
     public static async getMapByLoreId(id: any, beforeYear: number): Promise<MapUpdate | null> {
         let result = null;
         if(isNaN(id)) {
-            console.log("Lore get is NaN");
-            return result;
+            throw new Error("Lore get is NaN");
         }
         const path = `/${id}/get_last_map_update`;
         try {
@@ -40,7 +38,7 @@ class LoreApi {
                 return response.data;
             });
         } catch (error: any) {
-            console.log("Lore map get failed" + error.message);
+            throw new Error("Lore map get failed" + error.message);
         }
         return result;
     }
@@ -50,7 +48,7 @@ class LoreApi {
         try {
             await api.post(this.baseBackend+path,loreCreate, {withCredentials: true});
         } catch (error: any) {
-            console.log("Lore create failed" + error.message);
+            throw new Error("Lore create failed" + error.message);
         }
     }
 
@@ -59,7 +57,7 @@ class LoreApi {
         try {
             await api.post(this.baseBackend+path, {username: username}, {withCredentials: true});
         } catch (error: any) {
-            console.log("Lore add user failed" + error.message);
+            throw new Error("Lore add user failed" + error.message);
         }
     }
 
@@ -71,7 +69,7 @@ class LoreApi {
                 return response.data;
             });
         } catch (error: any) {
-            console.log("Lores available get failed" + error.message);
+            throw new Error("Lores available get failed" + error.message);
         }
         return result;
     }
@@ -84,7 +82,7 @@ class LoreApi {
                 return response.data;
             });
         } catch (error: any) {
-            console.log("Lores all get failed" + error.message);
+            throw new Error("Lores all get failed" + error.message);
         }
         return result;
     }

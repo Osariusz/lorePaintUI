@@ -18,7 +18,7 @@ class PlaceUpdateApi {
                 return response.data;
             });
         } catch (error: any) {
-            console.log("Last place update get failed" + error.message);
+            throw new Error("Last place update get failed" + error.message);
         }
         return result;
     }
@@ -30,7 +30,7 @@ class PlaceUpdateApi {
                 return response.data;
             });
         } catch (error: any) {
-            console.log("Last place update get failed" + error.message);
+            throw new Error("Last place update get failed" + error.message);
         }
     }
 }

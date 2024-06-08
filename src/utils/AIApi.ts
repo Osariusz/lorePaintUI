@@ -17,7 +17,7 @@ class AIApi {
                 return response.data;
             });
         } catch (error: any) {
-            console.log("Ask AI for place description failed" + error.message);
+            throw new Error("Ask AI for place description failed" + error.message);
         }
         return result;
     }

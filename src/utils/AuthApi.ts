@@ -19,7 +19,7 @@ class AuthApi {
                 setLoggedIn(true);
             }
         } catch (error: any) {
-            console.log("Login failed" + error.message);
+            throw new Error("Login failed" + error.message);
         }
     }
 
@@ -35,7 +35,7 @@ class AuthApi {
                 setRegistered(true);
             }
         } catch (error: any) {
-            console.log("Register failed" + error.message);
+            throw new Error("Register failed" + error.message);
         }
     }
 
@@ -47,7 +47,7 @@ class AuthApi {
                 setLogout(true);
             }
         } catch (error: any) {
-            console.log("Logout failed" + error.message);
+            throw new Error("Logout failed" + error.message);
         }
     }
 }

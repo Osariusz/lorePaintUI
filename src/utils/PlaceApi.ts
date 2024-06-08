@@ -11,7 +11,7 @@ class PlaceApi {
         try {
             await api.post(this.baseBackend+path,placeCreate, {withCredentials: true});
         } catch (error: any) {
-            console.log("PlaceDTO create failed" + error.message);
+            throw new Error("PlaceDTO create failed" + error.message);
         }
     }
 
@@ -25,7 +25,7 @@ class PlaceApi {
                 return response.data;
             });
         } catch (error: any) {
-            console.log("Getting all places before date failed" + error.message);
+            throw new Error("Getting all places before date failed" + error.message);
         }
         return result;
     }
@@ -37,7 +37,7 @@ class PlaceApi {
                 return response.data;
             });
         } catch (error: any) {
-            console.log("Getting all places before date failed" + error.message);
+            throw new Error("Getting all places before date failed" + error.message);
         }
         return result;
     }
@@ -50,7 +50,7 @@ class PlaceApi {
                 return response.data;
             });
         } catch (error: any) {
-            console.log("Getting place failed" + error.message);
+            throw new Error("Getting place failed" + error.message);
         }
         return result;
     }
