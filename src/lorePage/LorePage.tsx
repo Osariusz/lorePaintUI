@@ -57,6 +57,7 @@ const LorePage = () => {
 
     const [vectorSource, setVectorSource] = useState<VectorSource | null>(null);
     const [imageSource, setImageSource] = useState<ImageLayer<Static> | null>(null);
+    const [editOverlay, setEditOverlay] = useState<Overlay | null>(null);
 
     const onYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPlaceEdit(null);
@@ -83,6 +84,9 @@ const LorePage = () => {
                 const OLPlace = new Place(place, setPlaceEdit);
                 source.addFeature(OLPlace);
             })
+            if(editOverlay) {
+                editOverlay.setPosition(undefined);
+            }
         })
     }
 
@@ -166,6 +170,7 @@ const LorePage = () => {
                 },
             },
         }));
+        setEditOverlay(editOverlay);
 
         map.current.addOverlay(editOverlay);
 
@@ -269,7 +274,7 @@ const LorePage = () => {
             onChange={onYearChange}
             onKeyDown={onYearSubmit}
         />
-            <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber} currentLoreYear={currentYear}/>
+            <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber} currentLoreYear={currentYear} editOverlay={editOverlay!}/>
             {
                 userCursors.map(((cursor, i) => (
                     <UserCursor key={i} color={"red"} name={cursor.name} ref={(el: HTMLDivElement | null) => userCursorsRef.current[i] = el}/>

@@ -10,6 +10,7 @@ import place from "./Place";
 import PlaceApi from "../utils/PlaceApi";
 import placeUpdateApi from "../utils/PlaceUpdateApi";
 import AIApi from "../utils/AIApi";
+import {Overlay} from "ol";
 
 interface PlaceEditProps {
     place: Place | null,
@@ -17,7 +18,8 @@ interface PlaceEditProps {
     currentLoreYear: number,
     name?: string,
     description?: string,
-    loreYear?: number
+    loreYear?: number,
+    editOverlay: Overlay
 }
 
 const defaultProps = {
@@ -87,6 +89,7 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
         const point = props.place?.getGeometry() as Point;
         let date = new Date(`${year!.toString().padStart(4, '0')}-01-01` );
         let dateString = date.toISOString();
+        console.log(props.place);
         if(!props.place || props.place.getBackendId() == 0) { //todo: change new place handling
             await placeApi.createPlace(
                 {
@@ -97,13 +100,16 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
                     loreId: props.loreId,
                     isSecret: isSecret
                 }
-            )
+            ).then(() => {
+                props.editOverlay.setPosition(undefined);
+            })
         }
         else {
             await placeUpdateApi.createPlaceUpdate(props.place.getBackendId(),
                 {
                     description: description!,
-                    lore_date: date
+                    lore_date: date,
+                    placeId: props.place.getBackendId()
                 }
             );
         }
