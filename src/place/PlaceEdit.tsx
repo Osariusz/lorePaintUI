@@ -9,6 +9,7 @@ import PlaceUpdateApi from "../utils/PlaceUpdateApi";
 import place from "./Place";
 import PlaceApi from "../utils/PlaceApi";
 import placeUpdateApi from "../utils/PlaceUpdateApi";
+import AIApi from "../utils/AIApi";
 
 interface PlaceEditProps {
     place: Place | null,
@@ -36,6 +37,9 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
     const [description, setDescription] = React.useState(props.description);
     const [year, setYear] = React.useState(props.loreYear);
     const [isSecret, setIsSecret] = React.useState(false);
+    const [isAiView, setIsAiView] = React.useState(false);
+    const [prompt, setPrompt] = React.useState("");
+    const [aiGenerationStatus, setAiGenerationStatus] = React.useState<String | null>(null);
 
     useEffect(() => {
         console.log(props);
@@ -69,6 +73,15 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
         setIsSecret(e.target.checked);
     }
 
+    const onPromptChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPrompt(e.target.value);
+    }
+
+    const setAiView = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        setIsAiView(true);
+    }
+
     const submit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const point = props.place?.getGeometry() as Point;
@@ -96,10 +109,29 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
         }
     }
 
+    const generate = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        setIsAiView(false);
+        setAiGenerationStatus("WAIT THE AI IS GENERATING");
+
+        AIApi.getPlaceDescription(
+            {
+                name: name ? name : "No name provided",
+                info: prompt
+            }
+        ).then((response: string) => {
+            setDescription(response);
+            setAiGenerationStatus(null);
+        }).catch(() => {
+            setAiGenerationStatus("ERROR");
+        })
+    }
+
     return (
        <div ref={ref} style={{background: "white"}}>
 
-           <TextField
+           {!isAiView && <>
+             <TextField
                variant="outlined"
                margin="normal"
                required
@@ -153,6 +185,51 @@ const PlaceEdit = forwardRef( (props: PlaceEditProps, ref: any) => {
            >
                Submit
            </Button>
+             {!aiGenerationStatus && <Button
+             type="submit"
+             fullWidth
+             variant="contained"
+             color="primary"
+             onClick={setAiView}
+         >
+           AI Generation
+         </Button> }
+               {aiGenerationStatus}
+           </>}
+           {isAiView && <>
+             <TextField
+                 variant="outlined"
+                 margin="normal"
+                 required
+                 fullWidth
+                 id="place name"
+                 label="Name"
+                 name="place name"
+                 autoFocus
+                 value={name}
+                 onChange={onNameChange}
+             />
+             <TextField
+                 variant="outlined"
+                 margin="normal"
+                 required
+                 fullWidth
+                 id="prompt"
+                 label="Prompt"
+                 name="prompt"
+                 autoFocus
+                 onChange={onPromptChange}
+             />
+             <Button
+                 type="submit"
+                 fullWidth
+                 variant="contained"
+                 color="primary"
+                 onClick={generate}
+             >
+               Generate
+             </Button>
+           </>}
        </div>
     );
 }
