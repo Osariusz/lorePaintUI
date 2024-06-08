@@ -22,15 +22,19 @@ const BrowsePage = () => {
 
     const [lores, setLores] = useState<Lore[]>([]);
 
-    useEffect(() => {
+    const reloadLores = () => {
         LoreApi.getAvailableLores().then((response) => {
             setLores(response);
         });
+    }
+
+    useEffect(() => {
+        reloadLores();
     }, [])
 
     return <StyledContainer maxWidth={false}>
         {lores.map(lore => (<LoreEntry key={lore.id} lore={lore}/>))}
-        <LoreAdd/>
+        <LoreAdd reloadLores={reloadLores}/>
     <div style={{ height: '100vh' }} />
 
     </StyledContainer>;

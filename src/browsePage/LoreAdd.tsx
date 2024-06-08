@@ -3,7 +3,12 @@ import {Button} from "@mui/material";
 import AuthApi from "../utils/AuthApi";
 import LoreAddDetails from "./LoreAddDetails";
 
-const LoreAdd = () => {
+interface loreAddProps {
+    reloadLores: any
+}
+
+
+const LoreAdd = (loreAddProps: loreAddProps) => {
 
     const [details, setDetails] = useState(false);
 
@@ -11,8 +16,13 @@ const LoreAdd = () => {
         setDetails(true);
     }
 
+    const reloadLores = () => {
+        loreAddProps.reloadLores();
+        setDetails(false);
+    }
+
     return (<>
-        {details && <LoreAddDetails/>}
+        {details && <LoreAddDetails reloadLores={reloadLores}/>}
         <Button
             type="submit"
             fullWidth
