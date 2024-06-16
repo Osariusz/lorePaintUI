@@ -58,8 +58,6 @@ const getRadicalDates = (dates: Date[]): {min: Date, max: Date} => {
         date >= accumulator? date : accumulator
     );
 
-    console.log({min, max});
-
     return {min, max};
 }
 
