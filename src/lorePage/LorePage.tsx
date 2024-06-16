@@ -62,6 +62,10 @@ const getRadicalDates = (dates: Date[]): {min: Date, max: Date} => {
 }
 
 const getMarks = (dates: Date[]): {value: number}[] => {
+    if(dates.length == 0) {
+        console.log("d")
+        return [{value: new Date(0).getFullYear()}]
+    }
     return dates.map(date => {
         return {value: new Date(date).getFullYear()};
     });
