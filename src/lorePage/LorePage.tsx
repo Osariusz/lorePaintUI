@@ -63,7 +63,6 @@ const getRadicalDates = (dates: Date[]): {min: Date, max: Date} => {
 
 const getMarks = (dates: Date[]): {value: number}[] => {
     if(dates.length == 0) {
-        console.log("d")
         return [{value: new Date(0).getFullYear()}]
     }
     return dates.map(date => {
@@ -150,7 +149,6 @@ const LorePage = () => {
             console.log(response);
         })
         AllUpdateApi.getAllUpdates(idNumber).then(response => {
-            console.log(response);
             setAllUpdates(response);
         })
     }
