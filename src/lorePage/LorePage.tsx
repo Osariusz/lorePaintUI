@@ -23,6 +23,7 @@ import PlaceDTO from "../types/PlaceDTO";
 import CursorDTO from "../types/CursorDTO";
 import PlaceUpdateApi from "../utils/PlaceUpdateApi";
 import ImageSource from "ol/source/Image";
+import AllUpdateApi from "../utils/AllUpdateApi";
 
 const extent = [0, 0, 1024, 968];
 const projection = new Projection({
@@ -45,6 +46,29 @@ const StyledSlider = styled(Slider)({
     },
 });
 
+const getRadicalDates = (dates: Date[]): {min: Date, max: Date} => {
+    if(dates.length == 0) {
+        const now = new Date(0);
+        return {min: now, max: now};
+    }
+    const min = dates.reduce((accumulator, date) =>
+        date < accumulator? date : accumulator
+    );
+    const max = dates.reduce((accumulator, date) =>
+        date >= accumulator? date : accumulator
+    );
+
+    console.log({min, max});
+
+    return {min, max};
+}
+
+const getMarks = (dates: Date[]): {value: number}[] => {
+    return dates.map(date => {
+        return {value: new Date(date).getFullYear()};
+    });
+}
+
 const LorePage = () => {
     const { id } = useParams();
     const mapRef = useRef<HTMLDivElement>(null);
@@ -62,6 +86,8 @@ const LorePage = () => {
     const [vectorSource, setVectorSource] = useState<VectorSource | null>(null);
     const [imageSource, setImageSource] = useState<ImageLayer<Static> | null>(null);
     const [editOverlay, setEditOverlay] = useState<Overlay | null>(null);
+
+    const [allUpdates, setAllUpdates] = useState<Date[]>([]);
 
     const onYearChange = (e: Event, value: number | number[], activeThumb: number) => {
         setPlaceEdit(null);
@@ -120,6 +146,10 @@ const LorePage = () => {
     function loadLore() {
         LoreApi.getLoreById(idNumber).then(response => {
             console.log(response);
+        })
+        AllUpdateApi.getAllUpdates(idNumber).then(response => {
+            console.log(response);
+            setAllUpdates(response);
         })
     }
 
@@ -269,9 +299,9 @@ const LorePage = () => {
             getAriaValueText={() => {return "bob"}}
             step={null}
             valueLabelDisplay="on"
-            min={1}
-            max={2100}
-            marks={[{value: 1},{value: 2024}]}
+            min={new Date(getRadicalDates(allUpdates).min).getFullYear()}
+            max={new Date(getRadicalDates(allUpdates).max).getFullYear()}
+            marks={getMarks(allUpdates)}
             onChange={onYearChange}
             onChangeCommitted={onYearSubmit}
         />
