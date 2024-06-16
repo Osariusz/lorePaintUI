@@ -10,7 +10,7 @@ import Static from "ol/source/ImageStatic";
 import {getCenter} from "ol/extent";
 import PlaceEdit from "../place/PlaceEdit";
 import styled from "@emotion/styled";
-import {Container, TextField} from "@mui/material";
+import {Container, Slider, TextField} from "@mui/material";
 import {useParams} from "react-router-dom";
 import LoreApi from "../utils/LoreApi";
 import PlaceApi from "../utils/PlaceApi";
@@ -39,7 +39,11 @@ const StyledContainer = styled(Container)`
   height: 100vh;
 `;
 
-
+const StyledSlider = styled(Slider)({
+    '& .MuiSlider-valueLabel': {
+        top: 'calc(300%)',
+    },
+});
 
 const LorePage = () => {
     const { id } = useParams();
@@ -59,9 +63,9 @@ const LorePage = () => {
     const [imageSource, setImageSource] = useState<ImageLayer<Static> | null>(null);
     const [editOverlay, setEditOverlay] = useState<Overlay | null>(null);
 
-    const onYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onYearChange = (e: Event, value: number | number[], activeThumb: number) => {
         setPlaceEdit(null);
-        setCurrentYear(Number(e.target.value));
+        setCurrentYear(Number(value));
     }
 
     const updateMap = () => {
@@ -71,11 +75,9 @@ const LorePage = () => {
     }
 
     const onYearSubmit = (e: any) => {
-        if(e.keyCode == 13) {
-            vectorSource!.clear();
-            loadPlaces(vectorSource!);
-            updateMap();
-        }
+        vectorSource!.clear();
+        loadPlaces(vectorSource!);
+        updateMap();
     }
 
     function loadPlaces(source: VectorSource) {
@@ -261,18 +263,17 @@ const LorePage = () => {
 
 
     return <StyledContainer>
-        <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="year"
-            label="Year"
-            name="year"
-            autoComplete="year"
-            autoFocus
+        <StyledSlider
+            aria-label="Restricted values"
+            defaultValue={2024}
+            getAriaValueText={() => {return "bob"}}
+            step={null}
+            valueLabelDisplay="on"
+            min={1}
+            max={2100}
+            marks={[{value: 1},{value: 2024}]}
             onChange={onYearChange}
-            onKeyDown={onYearSubmit}
+            onChangeCommitted={onYearSubmit}
         />
             <PlaceEdit ref={editElement} place={placeEdit} loreId={idNumber} currentLoreYear={currentYear} editOverlay={editOverlay!}/>
             {
