@@ -10,3 +10,5 @@ LorePaint’s React frontend. Designed for seamless teamwork, it supports real-t
 ### Why It Stands Out  
 - 🌍 **Real-Time Collaboration:** Live collaboration tools like cursor tracking and role-based editing, providing an engaging and interactive user experience.  
 - 🚀 **Scalable and Modular:** A robust frontend built with React’s component-driven approach, perfect for expanding and scaling as new features are added.
+
+Backend: https://github.com/Osariusz/lorePaint
